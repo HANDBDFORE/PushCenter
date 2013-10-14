@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <context:annotation-config/>
+    <context:component-scan base-package="com.hand.push"/>
 
     <!-- jms -->
     <bean id="amq.connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
@@ -20,12 +23,13 @@
           class="org.springframework.jms.listener.DefaultMessageListenerContainer">
         <property name="connectionFactory" ref="consumer.connectionFactory" />
         <property name="destination" ref="destination" />
-        <property name="messageListener" ref="ActionCommitListener" />
+        <property name="messageListener" ref="PushNotificationListener" />
         <property name="pubSubNoLocal" value="false" />
     </bean>
 
 
     <bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
-        <constructor-arg index="0" value="action.topic" />
+        <constructor-arg index="0" value="push.topic" />
     </bean>
+
 </beans>

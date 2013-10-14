@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * @author emerson
  * 
  */
-@Component("ActionCommitListener")
+@Component("PushNotificationListener")
 public class PushNotificationListener implements MessageListener {
 
     @Resource(name = "PushCenter")
