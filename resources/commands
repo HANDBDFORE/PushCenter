@@ -1,0 +1,11 @@
+#JavaPNS 2.2
+mvn install:install-file -DgroupId=com.googlecode.javapns -DartifactId=javapns  -Dversion=2.2 -Dpackaging=jar -Dfile=${your directory}/JavaPNS.jar -DgeneratePom=true
+
+#gexin-rp-sdk-base-2.0.0.3.jar
+mvn install:install-file -DgroupId=com.gexin.rp -DartifactId=gexin-rp-sdk-base -Dversion=2.0.0.3 -Dpackaging=jar -Dfile=/home/emerson/develop/java/workspace/push/lib/gexin-rp-sdk-base-2.0.0.3.jar -DgeneratePom=true
+
+#gexin-rp-sdk-http-2.0.0.8.jar
+mvn install:install-file -DgroupId=com.gexin.rp -DartifactId=gexin-rp-sdk-http -Dversion=2.0.0.8 -Dpackaging=jar -Dfile=/home/emerson/develop/java/workspace/push/lib/ggexin-rp-sdk-http-2.0.0.8.jar -DgeneratePom=true
+
+#gexin-rp-sdk-template-2.0.0.3.jar
+mvn install:install-file -DgroupId=com.gexin.rp -DartifactId=gexin-rp-sdk-template -Dversion=2.0.0.3 -Dpackaging=jar -Dfile=/home/emerson/develop/java/workspace/push/lib/gexin-rp-sdk-template-2.0.0.3.jar -DgeneratePom=true
