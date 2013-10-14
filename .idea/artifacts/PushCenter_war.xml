@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="PushCenter:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="PushCenter.war">
+      <element id="artifact" artifact-name="PushCenter:war exploded" />
+    </root>
+  </artifact>
+</component>

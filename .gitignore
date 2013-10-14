@@ -1,0 +1,18 @@
+#Maven# 
+target/
+build/
+
+#some backup file
+*.*~
+
+#mac osx
+.DS_Store
+
+#log file
+*.log
+
+#android push key
+Android-push-info.properties
+
+#intellij build
+out/
