@@ -27,7 +27,6 @@
         <property name="pubSubNoLocal" value="false" />
     </bean>
 
-
     <bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
         <constructor-arg index="0" value="push.topic" />
     </bean>
