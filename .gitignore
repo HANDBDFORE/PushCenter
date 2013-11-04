@@ -13,6 +13,10 @@ build/
 
 #android push key
 Android-push-info.properties
+
+#ios push key
+ios-push-info.properties
+
 #apns
 *.p12
 
