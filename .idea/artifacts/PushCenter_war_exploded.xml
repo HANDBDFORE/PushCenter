@@ -16,7 +16,6 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-beans:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-context:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-expression:3.2.3.RELEASE" />
-          <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.5" />
           <element id="library" level="project" name="Maven: org.springframework:spring-webmvc:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-jms:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-tx:3.2.3.RELEASE" />
@@ -33,7 +32,6 @@
           <element id="library" level="project" name="Maven: org.apache.geronimo.specs:geronimo-j2ee-management_1.1_spec:1.0.1" />
           <element id="library" level="project" name="Maven: commons-net:commons-net:3.1" />
           <element id="library" level="project" name="Maven: org.jasypt:jasypt:1.9.0" />
-          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.2.4" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.12" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.12" />
           <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.2" />
@@ -46,6 +44,7 @@
           <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.6.6" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-log4j12:1.6.6" />
           <element id="library" level="project" name="Maven: log4j:log4j:1.2.15" />
+          <element id="library" level="project" name="Maven: org.bouncycastle:bcprov-jdk15on:1.47" />
         </element>
       </element>
     </root>
