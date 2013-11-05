@@ -20,5 +20,6 @@ ios-push-info.properties
 #apns
 *.p12
 
-#intellij build
+
+#intellij
 out/

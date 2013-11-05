@@ -8,6 +8,7 @@ import org.codehaus.jackson.type.JavaType;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public class JsonHelper {
 
     private static ObjectMapper mapper = new ObjectMapper();
     private static JsonFactory factory = new JsonFactory();
+
     /**
      * @param jsonResult
      * @return
@@ -67,14 +69,27 @@ public class JsonHelper {
         }
     }
 
-    public static <T> List<T> stringToCollection(String jsonString,Class<T> objectClazz){
+    public static <T> List<T> stringToCollection(String jsonString, Class<T> objectClazz) {
         System.out.println(jsonString);
-        JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, objectClazz);
+
         try {
-            return  mapper.readValue(jsonString, type);
+            jsonString = jsonString.trim();
+
+            if (jsonString.charAt(0) == '[') {
+                JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, objectClazz);
+                return mapper.readValue(jsonString, type);
+            }
+
+            else if (jsonString.charAt(0) == '{')
+                return Arrays.asList(JsonHelper.stringToJson(jsonString, objectClazz));
+
+            else
+                throw new IllegalArgumentException("数据格式不正确");
+
+
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("无法解析json");
+            throw new RuntimeException("无法解析json," + e.getMessage());
         }
 
     }

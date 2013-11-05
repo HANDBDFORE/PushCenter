@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.hand.push.impl;
 
@@ -21,7 +21,6 @@ import org.springframework.util.StringUtils;
 
 /**
  * @author emerson
- * 
  */
 @Component("PushNotificationListener")
 public class PushNotificationListener implements MessageListener {
@@ -31,18 +30,24 @@ public class PushNotificationListener implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        try {
-            System.out.println("++++++++++++++++++++++++++++++ receive " + ((TextMessage)message).getText());
-        } catch (JMSException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
+//        try {
+//            System.out.println("++++++++++++++++++++++++++++++ receive " + ((TextMessage) message).getText());
+//        } catch (JMSException e1) {
+//            // TODO Auto-generated catch block
+//            e1.printStackTrace();
+//        }
         if (message instanceof TextMessage) {
             try {
                 List<UserPushToken> items = build((TextMessage) message);
 
                 for (UserPushToken applyActionItem : items) {
-                    pushCenter.putRecord(applyActionItem);
+                    try {
+                        pushCenter.putRecord(applyActionItem);
+                    } catch (RuntimeException e) {
+                        //TODO 记录日志
+                        e.printStackTrace();
+                        //忽略继续
+                    }
                 }
 
             } catch (JMSException e) {
@@ -57,19 +62,13 @@ public class PushNotificationListener implements MessageListener {
 
         List<UserPushToken> tokens = null;
 
-        if (StringUtils.isEmpty(message.getText())){
+        if (StringUtils.isEmpty(message.getText())) {
+            //TODO 记录日志
             throw new IllegalArgumentException("消息不能为空");
         }
         String itemsString = message.getText().trim();
 
-        if (itemsString.charAt(0) == '[')
-            tokens = JsonHelper.stringToCollection(itemsString, UserPushToken.class);
-        else if (itemsString.charAt(0) == '{')
-            tokens = Arrays.asList(JsonHelper.stringToJson(itemsString, UserPushToken.class));
-        else
-            throw new IllegalArgumentException("数据格式不正确");
-
-        return tokens;
+        return JsonHelper.stringToCollection(itemsString, UserPushToken.class);
     }
 
 }
