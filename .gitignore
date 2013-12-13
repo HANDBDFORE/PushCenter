@@ -23,3 +23,5 @@ ios-push-info.properties
 
 #intellij
 out/
+.iml
+.idea
