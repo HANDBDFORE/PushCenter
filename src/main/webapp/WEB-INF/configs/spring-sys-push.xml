@@ -14,4 +14,18 @@
 		</property>
 		<property name="fileEncoding" value="utf-8" />
 	</bean>
+
+    <bean id="finder" class="com.hand.push.core.ComponentFinder">
+        <constructor-arg name="pusherClasses" >
+            <list>
+                <value type="java.lang.Class">com.hand.push.impl.iOSPusher</value>
+                <value type="java.lang.Class">com.hand.push.impl.AndroidPusher</value>
+            </list>
+
+        </constructor-arg>
+    </bean>
+
+
+
+
 </beans>

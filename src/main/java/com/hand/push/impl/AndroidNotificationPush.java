@@ -3,6 +3,7 @@
  */
 package com.hand.push.impl;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +67,11 @@ public class AndroidNotificationPush implements Pusher, DisposableBean, Initiali
                 pushMessage(target, message);
             }
         });
+    }
+
+    @Override
+    public void push(List<UserPushToken> pushRequests) {
+
     }
 
     /**
