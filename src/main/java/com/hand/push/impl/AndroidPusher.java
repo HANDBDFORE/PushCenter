@@ -11,9 +11,7 @@ import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.NodeResult;
 import com.hand.push.core.Pusher;
-import com.hand.push.dto.PushApp;
 import com.hand.push.dto.PushEntry;
-import com.hand.push.dto.PushRequest;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.util.StringUtils;
 
@@ -64,7 +62,7 @@ public final class AndroidPusher implements Pusher, DisposableBean {
 
 
     @Override
-    public NodeResult push(List<PushEntry> pushRequests){
+    public NodeResult push(List<PushEntry> pushRequests) {
 
         NodeResult result = new NodeResult();
 

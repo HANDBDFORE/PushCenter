@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
-/** 在节点这里就已经使用异步执行，各推送器不必担心自己会阻塞主线程
+/**
+ * 在节点这里就已经使用异步执行，各推送器不必担心自己会阻塞主线程
  * Created with IntelliJ IDEA.
  * User: emerson
  * Date: 12/13/13
@@ -77,11 +77,11 @@ public class PushProcessor implements Processor {
     }
 
     private NodeResult push(final List<PushEntry> requests, final Pusher pusher) {
-       final NodeResult result = new NodeResult();
+        final NodeResult result = new NodeResult();
 
 
         if (EXECUTOR.isShutdown()) {
-            result.addError("PushProcessor 试图在关闭系统期间继续执行新推送请求",new Object());
+            result.addError("PushProcessor 试图在关闭系统期间继续执行新推送请求", new Object());
             return result;
         }
 
@@ -94,7 +94,7 @@ public class PushProcessor implements Processor {
                     //因为是异步任务，前台并不需要立即知道结果，所以丢弃push过程中的错误，转为日志记录
                     //TODO 记录日志
                     //TODO 思考：如果需要将错误的数据记录数据库之类，应该在这里留一个函数回调
-                    System.out.println(errorEntry.getMessage()+" "+errorEntry.getData());
+                    System.out.println(errorEntry.getMessage() + " " + errorEntry.getData());
                 }
 
             }
@@ -119,7 +119,7 @@ public class PushProcessor implements Processor {
         return group;
     }
 
-    private Pusher selectPusher(String platformName, List<Pusher> pushers) throws PusherNotFoundException{
+    private Pusher selectPusher(String platformName, List<Pusher> pushers) throws PusherNotFoundException {
         for (Pusher pusher : pushers) {
             if (pusher.tellMeYourDeviceType().equals(platformName))
                 return pusher;

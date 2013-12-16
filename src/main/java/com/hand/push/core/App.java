@@ -25,7 +25,8 @@ public class App {
 
     private void check(List<Pusher> pushers, String appName, String appSecret) {
 
-        if (appName == null || appName.trim().length() == 0) throw new IllegalArgumentException("PushApp 的 appName 必须声明 ");
+        if (appName == null || appName.trim().length() == 0)
+            throw new IllegalArgumentException("PushApp 的 appName 必须声明 ");
         if (pushers == null || pushers.size() == 0)
             throw new IllegalArgumentException("PushApp: " + appName + " 属性pushers必须包含至少一个pusher");
         if (appSecret == null || appSecret.trim().length() == 0)

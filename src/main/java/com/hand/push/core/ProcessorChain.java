@@ -9,7 +9,7 @@ import java.util.List;
  * Time: 1:28 PM
  */
 
-public class ProcessorChain{
+public class ProcessorChain {
     private final List<Processor> processors;
 
 
@@ -17,18 +17,18 @@ public class ProcessorChain{
         this.processors = processors;
     }
 
-    public ProcessResult process(Bundle bundle){
+    public ProcessResult process(Bundle bundle) {
         final ProcessResult processResult = ProcessResult.construct();
 
         for (Processor processor : processors) {
 
 
-            try{
+            try {
                 processResult.addResult(processor.process(bundle));
-            }catch (Exception e){
+            } catch (Exception e) {
 //                processResult.ad
                 //TODO 捕获错误
-                processResult.addResult(new NodeResult().addError(e.getMessage(),processor));
+                processResult.addResult(new NodeResult().addError(e.getMessage(), processor));
             }
 
         }

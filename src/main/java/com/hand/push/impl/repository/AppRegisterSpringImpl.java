@@ -4,7 +4,6 @@ import com.hand.push.core.App;
 import com.hand.push.core.PusherNotFoundException;
 import com.hand.push.core.service.AppRegister;
 import com.hand.push.dto.PushApp;
-import com.hand.push.dto.PushRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

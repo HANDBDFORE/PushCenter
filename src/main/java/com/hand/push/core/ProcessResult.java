@@ -18,24 +18,24 @@ public class ProcessResult {
         this.results = results;
     }
 
-    public static ProcessResult construct(){
+    public static ProcessResult construct() {
         return new ProcessResult(new ArrayList<NodeResult>());
     }
 
-    public ProcessResult addResult(NodeResult result){
+    public ProcessResult addResult(NodeResult result) {
         this.results.add(result);
         return this;
     }
 
-    public boolean hasError(){
+    public boolean hasError() {
         for (NodeResult result : results) {
             if (!result.hasError()) return false;
         }
-        return true ;
+        return true;
     }
 
-    public List<Object> getErrors(){
-       List<Object> errors = new ArrayList<Object>();
+    public List<Object> getErrors() {
+        List<Object> errors = new ArrayList<Object>();
         for (NodeResult result : results) {
             if (result.hasError())
                 errors.add(result.getErrorList());

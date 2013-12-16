@@ -1,8 +1,6 @@
 package com.hand.push.core;
 
-import com.hand.push.dto.PushApp;
 import com.hand.push.dto.PushEntry;
-import com.hand.push.dto.PushRequest;
 
 import java.util.List;
 

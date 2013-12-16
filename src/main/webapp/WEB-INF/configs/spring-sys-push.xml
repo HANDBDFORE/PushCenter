@@ -43,13 +43,13 @@
             <constructor-arg name="appSecret" value="handhand"/>
             <constructor-arg name="pushers">
                 <array>
-                    <ref bean="HRAndroidPusher"/>
-                    <ref bean="HRiOSPusher"/>
+                    <ref bean="hrAndroidPusher"/>
+                    <ref bean="hriOSPusher"/>
                 </array>
             </constructor-arg>
         </bean>
 
-        <bean id="HRAndroidPusher" class="com.hand.push.impl.AndroidPusher">
+        <bean id="hrAndroidPusher" class="com.hand.push.impl.AndroidPusher">
             <description>
                 使用个推进行android推送
             </description>
@@ -59,7 +59,7 @@
             <constructor-arg name="masterSecret" value="xFrLUHKBEsAbkxlGKRsTu6"/>
             <constructor-arg name="api" value="http://sdk.open.api.igexin.com/apiex.htm"/>
         </bean>
-        <bean id="HRiOSPusher" class="com.hand.push.impl.iOSPusher">
+        <bean id="hriOSPusher" class="com.hand.push.impl.iOSPusher">
             <description>
                 iOS pusher
             </description>

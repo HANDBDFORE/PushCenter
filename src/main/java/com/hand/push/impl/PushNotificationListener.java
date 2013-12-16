@@ -40,7 +40,7 @@ public class PushNotificationListener implements MessageListener {
             } catch (JMSException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             throw new IllegalArgumentException("请发送textMessage");
         }
     }
