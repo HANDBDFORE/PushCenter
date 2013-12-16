@@ -8,5 +8,5 @@ package com.hand.push.core;
  */
 public interface Processor {
 
-    public Object process(Bundle bundle);
+    public NodeResult process(Bundle bundle);
 }

@@ -1,8 +1,6 @@
 package com.hand.push.core;
 
-import com.hand.push.dto.PushPacket;
-
-import java.util.List;
+import com.hand.push.dto.PushRequest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,12 +8,16 @@ import java.util.List;
  * Date: 12/13/13
  * Time: 5:07 PM
  */
-public class BundleImpl implements Bundle{
+public class BundleImpl implements Bundle {
 
-    private PushPacket packet;
+    private final PushRequest packet;
+
+    public BundleImpl(PushRequest packet) {
+        this.packet = packet;
+    }
 
     @Override
-    public PushPacket getPushPacket() {
+    public PushRequest getPushPacket() {
         return packet;
     }
 }

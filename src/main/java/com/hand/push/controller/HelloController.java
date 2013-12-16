@@ -1,7 +1,9 @@
 package com.hand.push.controller;
 
-import com.hand.push.core.ComponentFinder;
-import com.hand.push.core.service.AppRegester;
+import com.hand.push.core.App;
+import com.hand.push.core.service.AppRegister;
+import com.hand.push.dto.PushApp;
+import com.hand.push.dto.PushRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,16 +16,17 @@ public class HelloController {
 
 
     @Autowired
-    private AppRegester regester;
-
-    @Autowired
-    private ComponentFinder finder;
+    private AppRegister regester;
 
 
     @RequestMapping(method = RequestMethod.GET)
     public String printWelcome(ModelMap model) {
 
-        regester.load("aerwr", "afasdfasdr");
+        PushApp requestAppPacket = new PushApp("HR", "handhand");
+
+        App app = regester.loadApp(requestAppPacket);
+
+        System.out.println(app);
         model.addAttribute("message", "Hello world!");
 
 

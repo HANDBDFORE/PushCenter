@@ -1,31 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<!-- 读取properties文件 -->
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>classpath:push-resources/Android-push-info.properties</value>
-				<value>classpath:push-resources/ios-push-info.properties</value>
-			</list>
-		</property>
-		<property name="fileEncoding" value="utf-8" />
-	</bean>
-
-    <bean id="finder" class="com.hand.push.core.ComponentFinder">
-        <constructor-arg name="pusherClasses" >
+    <!-- 读取properties文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
             <list>
-                <value type="java.lang.Class">com.hand.push.impl.iOSPusher</value>
-                <value type="java.lang.Class">com.hand.push.impl.AndroidPusher</value>
+                <value>classpath:push-resources/Android-push-info.properties</value>
+                <value>classpath:push-resources/ios-push-info.properties</value>
             </list>
-
-        </constructor-arg>
+        </property>
+        <property name="fileEncoding" value="utf-8"/>
     </bean>
 
+    <beans>
+        <description>
+            系统节点配置
+        </description>
 
+        <bean id="processorChain" class="com.hand.push.core.ProcessorChain">
+            <constructor-arg name="processors">
+                <array>
+                    <ref bean="pushProcessor"/>
+                </array>
+            </constructor-arg>
+        </bean>
+
+    </beans>
+
+    <beans>
+        <description>
+            HR系统推送相关配置
+        </description>
+
+        <bean id="hrApp" class="com.hand.push.core.App">
+            <description>
+                HR系统推送相关配置
+            </description>
+            <constructor-arg name="appName" value="HR"/>
+            <constructor-arg name="appSecret" value="handhand"/>
+            <constructor-arg name="pushers">
+                <array>
+                    <ref bean="HRAndroidPusher"/>
+                    <ref bean="HRiOSPusher"/>
+                </array>
+            </constructor-arg>
+        </bean>
+
+        <bean id="HRAndroidPusher" class="com.hand.push.impl.AndroidPusher">
+            <description>
+                使用个推进行android推送
+            </description>
+
+            <constructor-arg name="appid" value="Ytk0ePKK6k65cRd8BGRN17"/>
+            <constructor-arg name="appkey" value="tYaDvmhEbj8VTgQYZaEJP4"/>
+            <constructor-arg name="masterSecret" value="xFrLUHKBEsAbkxlGKRsTu6"/>
+            <constructor-arg name="api" value="http://sdk.open.api.igexin.com/apiex.htm"/>
+        </bean>
+        <bean id="HRiOSPusher" class="com.hand.push.impl.iOSPusher">
+            <description>
+                iOS pusher
+            </description>
+            <constructor-arg name="certificatePath" value="/push-resources/hmbsng-apns-Development.p12"/>
+            <constructor-arg name="certificatePassword" value="12345678"/>
+
+        </bean>
+
+    </beans>
 
 
 </beans>

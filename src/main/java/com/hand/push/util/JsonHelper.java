@@ -78,9 +78,7 @@ public class JsonHelper {
             if (jsonString.charAt(0) == '[') {
                 JavaType type = mapper.getTypeFactory().constructCollectionType(List.class, objectClazz);
                 return mapper.readValue(jsonString, type);
-            }
-
-            else if (jsonString.charAt(0) == '{')
+            } else if (jsonString.charAt(0) == '{')
                 return Arrays.asList(JsonHelper.stringToJson(jsonString, objectClazz));
 
             else

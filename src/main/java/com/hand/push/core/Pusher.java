@@ -1,6 +1,8 @@
 package com.hand.push.core;
 
-import com.hand.push.domain.UserPushToken;
+import com.hand.push.dto.PushApp;
+import com.hand.push.dto.PushEntry;
+import com.hand.push.dto.PushRequest;
 
 import java.util.List;
 
@@ -11,20 +13,13 @@ import java.util.List;
  * Time: 9:54 AM
  * To change this template use File | Settings | File Templates.
  */
-public interface Pusher{
+public interface Pusher {
     public String tellMeYourDeviceType();
 
     /**
-     * 插入推送记录
+     * 推送数据
      *
-     * @param ut
-     *            带插入记录
-     */
-    public void putRecord(UserPushToken ut);
-
-    /**
-     *  推送数据
      * @param pushRequests
      */
-    public void push(List<UserPushToken> pushRequests);
+    public NodeResult push(List<PushEntry> pushRequests);
 }

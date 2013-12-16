@@ -15,26 +15,26 @@ import java.util.concurrent.ConcurrentMap;
 public class EntityUtils {
     //TODO 使用引用队列"ReferenceQueue"构建缓存
 
-    private static final ConcurrentMap<Class,ConcurrentMap<Class,Field>> cachedClassFields = new ConcurrentHashMap<Class, ConcurrentMap<Class, Field>>();
+    private static final ConcurrentMap<Class, ConcurrentMap<Class, Field>> cachedClassFields = new ConcurrentHashMap<Class, ConcurrentMap<Class, Field>>();
 
 
     public static <T extends Annotation> Field getAnnotatedField(Class clazz, Class<T> annotation) {
-        ConcurrentMap<Class,Field> fieldsMap = null;
+        ConcurrentMap<Class, Field> fieldsMap = null;
 
         //判断此类型是否被解析过
-        if (cachedClassFields.containsKey(clazz)){
+        if (cachedClassFields.containsKey(clazz)) {
             //此类型以前被解析过
-            fieldsMap =   cachedClassFields.get(clazz);
+            fieldsMap = cachedClassFields.get(clazz);
 
         }
 
-        if (fieldsMap==null){
+        if (fieldsMap == null) {
             //未被解析，构造一个缓存对象
             fieldsMap = new ConcurrentHashMap<Class, Field>();
-            cachedClassFields.put(clazz,fieldsMap);
+            cachedClassFields.put(clazz, fieldsMap);
         }
 
-        if (fieldsMap.containsKey(annotation)){
+        if (fieldsMap.containsKey(annotation)) {
             return fieldsMap.get(annotation);
         }
 
@@ -49,10 +49,7 @@ public class EntityUtils {
 
         }
 
-        throw new IllegalStateException("没有找到配置的逻辑主键字段，请确保在逻辑字段上加入 "+annotation.getClass() +" 注解");
-
-
-
+        throw new IllegalStateException("没有找到配置的逻辑主键字段，请确保在逻辑字段上加入 " + annotation.getClass() + " 注解");
 
 
     }
@@ -83,8 +80,6 @@ public class EntityUtils {
             throw new RuntimeException("类型 " + object.getClass().getName() + " 属性 " + field.getName() + " 必须要声明get方法");
         }
     }
-
-
 
 
 }

@@ -1,8 +1,6 @@
 package com.hand.push.core;
 
-import com.hand.push.dto.PushPacket;
-
-import java.util.List;
+import com.hand.push.dto.PushRequest;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,5 +10,5 @@ import java.util.List;
  */
 public interface Bundle {
 
-    public PushPacket getPushPacket();
+    public PushRequest getPushPacket();
 }

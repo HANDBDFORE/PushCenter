@@ -1,1 +1,0 @@
-package com.hand.push.core;import com.hand.push.domain.UserPushToken;/** * 推送Director *  * @author mahaojie *  */public interface NotificationPush {	/**	 * 插入推送记录	 * 	 * @param ut	 *            带插入记录	 */	public void putRecord(UserPushToken ut);}
