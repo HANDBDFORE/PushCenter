@@ -29,9 +29,9 @@ public class ProcessResult {
 
     public boolean hasError() {
         for (NodeResult result : results) {
-            if (!result.hasError()) return false;
+            if (result.hasError()) return true;
         }
-        return true;
+        return false;
     }
 
     public List<Object> getErrors() {

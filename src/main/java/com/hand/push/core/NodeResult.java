@@ -19,6 +19,15 @@ public class NodeResult {
         errorEntries = new ArrayList<ErrorEntry>();
     }
 
+    public static NodeResult success() {
+        return new NodeResult();
+    }
+
+    public static NodeResult error(String message, Object source) {
+        return new NodeResult().addError(message, source);
+
+    }
+
     public NodeResult addError(String message, Object source) {
         errorEntries.add(new ErrorEntry(message, source));
         return this;

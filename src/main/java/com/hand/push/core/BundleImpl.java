@@ -20,4 +20,11 @@ public class BundleImpl implements Bundle {
     public PushRequest getPushPacket() {
         return packet;
     }
+
+    @Override
+    public String toString() {
+        return "BundleImpl{" +
+                "packet=" + packet +
+                '}';
+    }
 }

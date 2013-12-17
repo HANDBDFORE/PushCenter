@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * 在节点这里就已经使用异步执行，各推送器不必担心自己会阻塞主线程
@@ -28,14 +26,6 @@ public class PushProcessor implements Processor {
 
     @Resource(name = "appRegisterSpringImpl")
     private AppRegister register;
-
-    //执行推送，避免卡掉主进程
-    private static final ExecutorService EXECUTOR;
-
-    static {
-        EXECUTOR = Executors.newCachedThreadPool();
-    }
-
 
     @Override
     public NodeResult process(Bundle bundle) {
@@ -67,7 +57,8 @@ public class PushProcessor implements Processor {
 
             } catch (PusherNotFoundException pne) {
                 result.addError(pne.getMessage(), pushRequests);
-            } catch (Exception otherE) {
+            } catch (RuntimeException otherE) {
+                //捕获未知错误，以便其他推送器可以继续执行
                 result.addError("发生未知错误 " + otherE.getMessage(), pushRequests);
             }
 
@@ -79,26 +70,10 @@ public class PushProcessor implements Processor {
     private NodeResult push(final List<PushEntry> requests, final Pusher pusher) {
         final NodeResult result = new NodeResult();
 
+        NodeResult pushResult = pusher.push(requests);
 
-        if (EXECUTOR.isShutdown()) {
-            result.addError("PushProcessor 试图在关闭系统期间继续执行新推送请求", new Object());
-            return result;
-        }
-
-        EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                NodeResult pushResult = pusher.push(requests);
-                for (ErrorEntry errorEntry : pushResult.getErrorList()) {
-                    //因为是异步任务，前台并不需要立即知道结果，所以丢弃push过程中的错误，转为日志记录
-                    //TODO 记录日志
-                    //TODO 思考：如果需要将错误的数据记录数据库之类，应该在这里留一个函数回调
-                    System.out.println(errorEntry.getMessage() + " " + errorEntry.getData());
-                }
-
-            }
-        });
+        if (pushResult.hasError())
+            result.addErrors(pushResult.getErrorList());
 
         return result;
     }

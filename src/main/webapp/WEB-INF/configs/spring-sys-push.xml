@@ -63,8 +63,9 @@
             <description>
                 iOS pusher
             </description>
-            <constructor-arg name="certificatePath" value="/push-resources/hmbsng-apns-Development.p12"/>
+            <constructor-arg name="certificatePath" value="/push-resources/hmbsng-apns-Production.p12"/>
             <constructor-arg name="certificatePassword" value="12345678"/>
+            <constructor-arg name="isProduct" value="true"/>
 
         </bean>
 

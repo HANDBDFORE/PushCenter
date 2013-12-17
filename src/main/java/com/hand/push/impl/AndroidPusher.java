@@ -12,30 +12,30 @@ import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.NodeResult;
 import com.hand.push.core.Pusher;
 import com.hand.push.dto.PushEntry;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 /**
  * @author Emerson
  */
 
-public final class AndroidPusher implements Pusher, DisposableBean {
+public final class AndroidPusher implements Pusher {
+    private static final String RESULT_CODE_SUCCESS = "ok";
+    private static final String RESULT_CODE_KEY = "result";
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+
     private final String appid;
     private final String appkey;
     private final String masterSecret;
     private final String api;
-
-    private static final ExecutorService EXECUTOR;
-
-    static {
-        EXECUTOR = Executors.newCachedThreadPool();
-
-    }
 
     public AndroidPusher(String appid, String appkey, String masterSecret, String api) {
 
@@ -45,6 +45,8 @@ public final class AndroidPusher implements Pusher, DisposableBean {
         this.appkey = appkey;
         this.masterSecret = masterSecret;
         this.api = api;
+
+        logger.debug("Android Pusher inited, "+toString());
     }
 
     private void check(String appid, String appkey, String masterSecret, String api) {
@@ -66,13 +68,45 @@ public final class AndroidPusher implements Pusher, DisposableBean {
 
         NodeResult result = new NodeResult();
 
+        List<FutureTask<NodeResult>> tasks = new ArrayList<FutureTask<NodeResult>>(pushRequests.size());
 
+        //并发推送
         for (PushEntry pushRequest : pushRequests) {
+            FutureTask<NodeResult> task = putRecord(pushRequest);
+            tasks.add(task);
+            new Thread(task).start();
+        }
+
+
+        //获取结果
+        for (FutureTask<NodeResult> task : tasks) {
             try {
-                this.putRecord(pushRequest);
+                //获取执行结果
+                NodeResult pushResult = task.get();
+
+                //如果有错，添加到错误列表
+                if (pushResult.hasError())
+                    result.addErrors(pushResult.getErrorList());
+
+            } catch (InterruptedException e) {
+                //未知异常
+                e.printStackTrace();
+                result.addError(e.getMessage(), AndroidPusher.class);
+            } catch (ExecutionException e) {
+                //未知异常
+                e.printStackTrace();
+                result.addError(e.getMessage(), AndroidPusher.class);
             } catch (RuntimeException e) {
-                result.addError(e.getMessage(), pushRequest);
+                //未知异常
+                e.printStackTrace();
+                result.addError(e.getMessage(), AndroidPusher.class);
             }
+        }
+
+        if (result.hasError())
+            logger.error("Android Pusher 推送过程中发生异常， "+result.getErrorList().toString());
+        else{
+            logger.info("Android 推送结束，没有异常产生");
         }
 
         return result;
@@ -80,25 +114,43 @@ public final class AndroidPusher implements Pusher, DisposableBean {
 
     }
 
-    //    @Override
-    private void putRecord(final PushEntry ut) {
+    /**
+     * 将推送请求转化为一个FutureTask
+     *
+     * @param entry
+     * @return
+     */
+    private FutureTask<NodeResult> putRecord(final PushEntry entry) {
 
-        if (ut == null || StringUtils.isEmpty(ut.getToken())) {
-            return;
-        }
-        if (EXECUTOR.isShutdown()) {
-            return;
-        }
+        return new FutureTask<NodeResult>(
+                new Callable<NodeResult>() {
+                    @Override
+                    public NodeResult call() throws Exception {
 
-        EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                NotificationTemplate template = generateNotificationTemplate(ut);
-                Target target = generateTarget(ut);
-                SingleMessage message = generateMessage(template);
-                pushMessage(target, message);
-            }
-        });
+                        NodeResult executeResult = null;
+
+
+                        NotificationTemplate template = generateNotificationTemplate(entry);
+                        Target target = generateTarget(entry);
+                        SingleMessage message = generateMessage(template);
+
+                        IPushResult pushResult = pushMessage(target, message);
+
+                        String responseCode = pushResult.getResponse().get(RESULT_CODE_KEY).toString();
+                        if (RESULT_CODE_SUCCESS.equals(responseCode)) {
+                            //推送成功
+                            executeResult = NodeResult.success();
+
+                        } else {
+                            executeResult = NodeResult.error(responseCode, entry);
+                        }
+
+                        return executeResult;
+                    }
+                }
+
+        );
+
     }
 
 
@@ -106,11 +158,11 @@ public final class AndroidPusher implements Pusher, DisposableBean {
      * @param target1
      * @param message
      */
-    private void pushMessage(Target target1, SingleMessage message) {
+    private IPushResult pushMessage(Target target1, SingleMessage message) {
         IIGtPush push = new IGtPush(api, appkey, masterSecret);
         // 单推
-        IPushResult ret = push.pushMessageToSingle(message, target1);
-        System.out.println(ret.getResponse().toString());
+        return push.pushMessageToSingle(message, target1);
+
     }
 
     /**
@@ -162,17 +214,5 @@ public final class AndroidPusher implements Pusher, DisposableBean {
                 ", api='" + api + '\'' +
                 '}';
     }
-
-
-    @Override
-    public void destroy() throws Exception {
-        EXECUTOR.shutdown();
-        try {
-            EXECUTOR.awaitTermination(1, TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            EXECUTOR.shutdownNow();
-        }
-    }
-
 
 }
