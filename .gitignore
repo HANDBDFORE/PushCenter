@@ -23,7 +23,7 @@ ios-push-info.properties
 
 #intellij
 out/
-.iml
+*.iml
 .idea
 
 #eclipse
