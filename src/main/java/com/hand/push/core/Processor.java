@@ -1,5 +1,8 @@
 package com.hand.push.core;
 
+import com.hand.push.core.domain.Bundle;
+import com.hand.push.core.domain.NodeResult;
+
 /**
  * Created with IntelliJ IDEA.
  * User: emerson

@@ -1,10 +1,10 @@
 /**
  *
  */
-package com.hand.push.impl;
+package com.hand.push.jms;
 
-import com.hand.push.core.Bundle;
-import com.hand.push.core.BundleImpl;
+import com.hand.push.core.domain.Bundle;
+import com.hand.push.core.domain.BundleImpl;
 import com.hand.push.core.ProcessorChain;
 import com.hand.push.dto.PushRequest;
 import com.hand.push.util.JsonHelper;

@@ -1,4 +1,6 @@
-package com.hand.push.core;
+package com.hand.push.core.domain;
+
+import com.hand.push.core.Pusher;
 
 import java.util.Collections;
 import java.util.List;

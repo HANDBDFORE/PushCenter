@@ -1,4 +1,4 @@
-package com.hand.push.core;
+package com.hand.push.core.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.hand.push.impl;
+package com.hand.push.impl.Pushers;
 
 import com.gexin.rp.sdk.base.IIGtPush;
 import com.gexin.rp.sdk.base.IPushResult;
@@ -9,7 +9,7 @@ import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
-import com.hand.push.core.NodeResult;
+import com.hand.push.core.domain.NodeResult;
 import com.hand.push.core.Pusher;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;

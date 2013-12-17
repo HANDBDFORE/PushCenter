@@ -35,7 +35,7 @@
             HR系统推送相关配置
         </description>
 
-        <bean id="hrApp" class="com.hand.push.core.App">
+        <bean id="hrApp" class="com.hand.push.core.domain.App">
             <description>
                 HR系统推送相关配置
             </description>
@@ -49,7 +49,7 @@
             </constructor-arg>
         </bean>
 
-        <bean id="hrAndroidPusher" class="com.hand.push.impl.AndroidPusher">
+        <bean id="hrAndroidPusher" class="com.hand.push.impl.Pushers.AndroidPusher">
             <description>
                 使用个推进行android推送
             </description>
@@ -59,7 +59,7 @@
             <constructor-arg name="masterSecret" value="xFrLUHKBEsAbkxlGKRsTu6"/>
             <constructor-arg name="api" value="http://sdk.open.api.igexin.com/apiex.htm"/>
         </bean>
-        <bean id="hriOSPusher" class="com.hand.push.impl.iOSPusher">
+        <bean id="hriOSPusher" class="com.hand.push.impl.Pushers.iOSPusher">
             <description>
                 iOS pusher
             </description>

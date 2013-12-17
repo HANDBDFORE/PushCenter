@@ -1,7 +1,8 @@
 package com.hand.push.core.service;
 
-import com.hand.push.core.App;
+
 import com.hand.push.core.PusherNotFoundException;
+import com.hand.push.core.domain.App;
 import com.hand.push.dto.PushApp;
 
 /**

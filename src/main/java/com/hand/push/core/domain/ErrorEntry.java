@@ -1,4 +1,4 @@
-package com.hand.push.core;
+package com.hand.push.core.domain;
 
 /**
  * Created with IntelliJ IDEA.
