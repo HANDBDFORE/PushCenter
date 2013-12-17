@@ -25,3 +25,8 @@ ios-push-info.properties
 out/
 .iml
 .idea
+
+#eclipse
+.settings
+.classpath
+.project
