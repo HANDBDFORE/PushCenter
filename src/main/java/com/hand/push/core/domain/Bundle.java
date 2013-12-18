@@ -11,4 +11,6 @@ import com.hand.push.dto.PushRequest;
 public interface Bundle {
 
     public PushRequest getPushPacket();
+
+    public String getJobId();
 }

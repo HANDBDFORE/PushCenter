@@ -3,6 +3,7 @@ package com.hand.push.core;
 import com.hand.push.core.domain.Bundle;
 import com.hand.push.core.domain.NodeResult;
 import com.hand.push.core.domain.ProcessResult;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class ProcessorChain {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LogUtil.getSystemLogger();
 
     private final List<Processor> processors;
 
@@ -41,7 +42,7 @@ public class ProcessorChain {
     }
 
     public ProcessResult process(final Bundle bundle) {
-        final ProcessResult processResult = ProcessResult.construct();
+        final ProcessResult processResult = ProcessResult.construct(bundle.getJobId());
 
         logger.info("receive execution request");
 

@@ -8,6 +8,7 @@ import com.hand.push.core.domain.BundleImpl;
 import com.hand.push.core.ProcessorChain;
 import com.hand.push.dto.PushRequest;
 import com.hand.push.util.JsonHelper;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -34,7 +35,7 @@ public class PushNotificationListener implements MessageListener {
             try {
 
                 PushRequest packet = build((TextMessage) message);
-                Bundle bundle = new BundleImpl(packet);
+                Bundle bundle = new BundleImpl(packet, DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis())));
                 processor.process(bundle);
 
             } catch (JMSException e) {

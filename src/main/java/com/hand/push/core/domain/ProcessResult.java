@@ -1,5 +1,7 @@
 package com.hand.push.core.domain;
 
+import org.springframework.util.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,15 +13,19 @@ import java.util.List;
  * Time: 1:52 PM
  */
 public class ProcessResult {
+    private final String flowId;
+
 
     private final List<NodeResult> results;
 
-    private ProcessResult(List<NodeResult> results) {
+    private ProcessResult(List<NodeResult> results,String flowId) {
+        this.flowId =flowId;
         this.results = results;
     }
 
-    public static ProcessResult construct() {
-        return new ProcessResult(new ArrayList<NodeResult>());
+    public static ProcessResult construct(String flowId) throws IllegalArgumentException{
+        if (StringUtils.isEmpty(flowId))throw new IllegalArgumentException("flowId必须赋值");
+        return new ProcessResult(new ArrayList<NodeResult>(),flowId);
     }
 
     public ProcessResult addResult(NodeResult result) {
@@ -44,11 +50,15 @@ public class ProcessResult {
         return Collections.unmodifiableList(errors);
     }
 
+    public String getFlowId() {
+        return flowId;
+    }
 
     @Override
     public String toString() {
         return "ProcessResult{" +
-                "results=" + results +
+                "flowId='" + flowId + '\'' +
+                ", results=" + results +
                 '}';
     }
 }

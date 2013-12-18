@@ -42,7 +42,7 @@ public class PushProcessor implements Processor {
 
 
         //3. 将推送分组
-        Map<String, List<PushEntry>> groupedRequest = groupRequests(bundle.getPushPacket().getData());
+        Map<String, List<PushEntry>> groupedRequest = groupRequests(bundle.getPushPacket().getEntries());
 
 
         //4. 选择推送器推送

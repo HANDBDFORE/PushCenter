@@ -14,7 +14,7 @@ import java.util.List;
     "key": "iiae7893493",
     "secret": "werdfwserw"
   },
-  "data": [
+  "entries": [
     {
       "platform": "iOS",
       "token": "ikqwer394jskjfksjdf",
@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class PushRequest {
     private PushApp app;
-    private List<PushEntry> data;
+    private List<PushEntry> entries;
 
 
     public PushApp getApp() {
@@ -43,19 +43,19 @@ public class PushRequest {
         this.app = app;
     }
 
-    public List<PushEntry> getData() {
-        return data;
+    public List<PushEntry> getEntries() {
+        return entries;
     }
 
-    public void setData(List<PushEntry> data) {
-        this.data = data;
+    public void setEntries(List<PushEntry> entries) {
+        this.entries = entries;
     }
 
     @Override
     public String toString() {
         return "PushRequest{" +
                 "app=" + app +
-                ", data=" + data +
+                ", entries=" + entries +
                 '}';
     }
 
