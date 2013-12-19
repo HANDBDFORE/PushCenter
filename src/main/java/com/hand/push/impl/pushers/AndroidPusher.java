@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.hand.push.impl.Pushers;
+package com.hand.push.impl.pushers;
 
 import com.gexin.rp.sdk.base.IIGtPush;
 import com.gexin.rp.sdk.base.IPushResult;
@@ -9,28 +9,25 @@ import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
-import com.hand.push.core.domain.NodeResult;
+import com.hand.push.core.LogUtil;
 import com.hand.push.core.Pusher;
+import com.hand.push.core.domain.NodeResult;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import sun.util.logging.resources.logging;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
-/**
+/**  Android 推送器，使用 个推 平台
  * @author Emerson
  */
 
 public final class AndroidPusher implements Pusher {
     private static final String RESULT_CODE_SUCCESS = "ok";
     private static final String RESULT_CODE_KEY = "result";
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
 
     private final String appid;
     private final String appkey;
@@ -46,7 +43,13 @@ public final class AndroidPusher implements Pusher {
         this.masterSecret = masterSecret;
         this.api = api;
 
-        logger.debug("Android Pusher inited, "+toString());
+
+
+        getLogger().debug("Android Pusher inited, " + toString());
+    }
+
+    private Logger getLogger() {
+        return LogUtil.getThreadSafeCoreLogger();
     }
 
     private void check(String appid, String appkey, String masterSecret, String api) {
@@ -88,15 +91,7 @@ public final class AndroidPusher implements Pusher {
                 if (pushResult.hasError())
                     result.addErrors(pushResult.getErrorList());
 
-            } catch (InterruptedException e) {
-                //未知异常
-                e.printStackTrace();
-                result.addError(e.getMessage(), AndroidPusher.class);
-            } catch (ExecutionException e) {
-                //未知异常
-                e.printStackTrace();
-                result.addError(e.getMessage(), AndroidPusher.class);
-            } catch (RuntimeException e) {
+            } catch (Exception e) {
                 //未知异常
                 e.printStackTrace();
                 result.addError(e.getMessage(), AndroidPusher.class);
@@ -104,9 +99,9 @@ public final class AndroidPusher implements Pusher {
         }
 
         if (result.hasError())
-            logger.error("Android Pusher 推送过程中发生异常， "+result.getErrorList().toString());
-        else{
-            logger.info("Android 推送结束，没有异常产生");
+            getLogger().error("An error occurred when pushing to Android devices: " + result.getErrorList().toString());
+        else {
+            getLogger().info("Android Pusher processes ended, no error occurred");
         }
 
         return result;
@@ -139,9 +134,12 @@ public final class AndroidPusher implements Pusher {
                         String responseCode = pushResult.getResponse().get(RESULT_CODE_KEY).toString();
                         if (RESULT_CODE_SUCCESS.equals(responseCode)) {
                             //推送成功
+
                             executeResult = NodeResult.success();
+                            getLogger().trace("success: "+entry);
 
                         } else {
+                            getLogger().error("error! Caused by: "+responseCode+", data: " +entry);
                             executeResult = NodeResult.error(responseCode, entry);
                         }
 

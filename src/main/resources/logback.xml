@@ -19,7 +19,7 @@
             <defaultValue>unknown</defaultValue>
         </discriminator>
         <sift>
-            <appender name="FILE-${jobId}" class="ch.qos.logback.core.FileAppender">
+            <appender name="${jobId}" class="ch.qos.logback.core.FileAppender">
                 <file>${catalina.base}/logs/${application-name}/job-${jobId}.log</file>
                 <layout class="ch.qos.logback.classic.PatternLayout">
                     <pattern>%d{HH:mm:ss:SSS} | %-5level | %thread | %logger{20} | %msg%n%rEx</pattern>
@@ -28,11 +28,11 @@
         </sift>
     </appender>
 
-    <logger name="dataFlow" level="debug" >
+    <logger name="core" level="trace" >
         <appender-ref ref="SIFT" />
     </logger>
 
-    <root level="error">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 

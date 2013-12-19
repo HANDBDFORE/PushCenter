@@ -1,13 +1,14 @@
 package com.hand.push.controller;
 
-import com.hand.push.core.LogUtil;
+import com.hand.push.core.ProcessorChain;
 import com.hand.push.core.domain.Bundle;
 import com.hand.push.core.domain.BundleImpl;
-import com.hand.push.core.ProcessorChain;
 import com.hand.push.core.domain.ProcessResult;
 import com.hand.push.dto.PushRequest;
 import com.hand.push.util.JsonHelper;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -22,6 +23,8 @@ import javax.annotation.Resource;
 @RequestMapping("/push")
 public class PortalController {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource(name = "processorChain")
     private ProcessorChain processor;
 
@@ -29,30 +32,29 @@ public class PortalController {
     @ResponseBody
     public String printWelcome(@RequestParam("packet") String packetString) {
 
+        PushRequest packet = build(packetString);
+        logger.debug("Packet data is: " + packet.toString());
+
         String jobId = DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis()));
+        logger.info("jobId generated: " + jobId);
+
         MDC.put("jobId", jobId);
 
+        Bundle bundle = new BundleImpl(packet, jobId);
 
-
-        Bundle bundle = new BundleImpl(build(packetString), jobId);
         ProcessResult re = processor.process(bundle);
-        System.out.println(re.getFlowId());
 
         MDC.clear();
 
         return "ok";
     }
 
-    private PushRequest build(String packetString) {
-
-        System.out.println(packetString);
-
+    private PushRequest build(String packetString) throws IllegalArgumentException {
 
         if (StringUtils.isEmpty(packetString)) {
-            //TODO 记录日志
+            logger.error("parameter[packet] is empty, request denied.");
             throw new IllegalArgumentException("消息不能为空");
         }
-
 
 
         return JsonHelper.stringToJson(packetString, PushRequest.class);

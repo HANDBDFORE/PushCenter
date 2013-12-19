@@ -18,14 +18,14 @@ public class ProcessResult {
 
     private final List<NodeResult> results;
 
-    private ProcessResult(List<NodeResult> results,String flowId) {
-        this.flowId =flowId;
+    private ProcessResult(List<NodeResult> results, String flowId) {
+        this.flowId = flowId;
         this.results = results;
     }
 
-    public static ProcessResult construct(String flowId) throws IllegalArgumentException{
-        if (StringUtils.isEmpty(flowId))throw new IllegalArgumentException("flowId必须赋值");
-        return new ProcessResult(new ArrayList<NodeResult>(),flowId);
+    public static ProcessResult construct(String flowId) throws IllegalArgumentException {
+        if (StringUtils.isEmpty(flowId)) throw new IllegalArgumentException("flowId必须赋值");
+        return new ProcessResult(new ArrayList<NodeResult>(), flowId);
     }
 
     public ProcessResult addResult(NodeResult result) {

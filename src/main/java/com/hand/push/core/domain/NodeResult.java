@@ -19,6 +19,10 @@ public class NodeResult {
         errorEntries = new ArrayList<ErrorEntry>();
     }
 
+    public static  NodeResult empty(){
+        return new NodeResult();
+    }
+
     public static NodeResult success() {
         return new NodeResult();
     }

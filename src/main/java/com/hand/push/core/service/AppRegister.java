@@ -13,6 +13,12 @@ import com.hand.push.dto.PushApp;
  */
 public interface AppRegister {
 
-
+    /**
+     * 根据数据查询对应的app
+     *
+     * @param requestAppPacket
+     * @return
+     * @throws PusherNotFoundException 没找到app的时候，抛出此错误
+     */
     public App loadApp(PushApp requestAppPacket) throws PusherNotFoundException;
 }

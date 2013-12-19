@@ -1,17 +1,16 @@
 package com.hand.push.core;
 
 import com.hand.push.core.domain.Bundle;
-import com.hand.push.core.domain.NodeResult;
 import com.hand.push.core.domain.ProcessResult;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import static com.hand.push.core.domain.NodeResult.error;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,71 +20,80 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class ProcessorChain {
-    private final Logger logger = LogUtil.getSystemLogger();
+
 
     private final List<Processor> processors;
 
 
-    //执行推送，避免卡掉主进程
+    //并发执行处理链
     private static final ExecutorService EXECUTOR;
 
 
     static {
-        EXECUTOR = Executors.newCachedThreadPool();
+        EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
 
     public ProcessorChain(List<Processor> processors) {
         this.processors = processors;
-
-        logger.debug("ProcessorChain init, " + toString());
+         getThreadSafeCoreLogger().debug("ProcessorChain init, " + processors.size() + " processors registered: " + toString());
     }
 
     public ProcessResult process(final Bundle bundle) {
         final ProcessResult processResult = ProcessResult.construct(bundle.getJobId());
 
-        logger.info("receive execution request");
-
         if (EXECUTOR.isShutdown()) {
-            processResult.addResult(NodeResult.error("PushProcessor 试图在关闭系统期间继续执行新推送请求", bundle.getPushPacket()));
-            logger.error("PushProcessor attempt to execute processors while shutting down, push requests REJECTED.");
+            processResult.addResult(error("PushProcessor 试图在关闭系统期间继续执行新推送请求", bundle.getPushPacket()));
+             getThreadSafeCoreLogger().error("PushProcessor attempt to execute processors while shutting down, push requests REJECTED.");
+
         } else {
 
-            EXECUTOR.execute(new Runnable() {
-                @Override
-                public void run() {
-                    logger.trace("ProcessorChain start to execute, bundle:" + bundle.toString());
+            try {
+                EXECUTOR.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                         getThreadSafeCoreLogger().debug("ProcessorChain start to execute, bundle:" + bundle.toString());
 
-                    for (Processor processor : processors) {
-                        try {
-                            processResult.addResult(processor.process(bundle));
-                        } catch (Exception e) {
-                            //因为是异步任务，前台并不需要立即知道结果，所以丢弃push过程中的错误，转为日志记录
-                            logger.error("An unexpected exception occurred, we don't have any idea. Caused By: " + e.getCause());
-                            processResult.addResult(new NodeResult().addError(e.getMessage(), processor));
+                        for (Processor processor : processors) {
+                            try {
+                                processResult.addResult(processor.process(bundle));
+                            } catch (Exception e) {
+                                //当一个节点出现问题时，采取继续执行的策略，以便后续节点能够执行
+                                 getThreadSafeCoreLogger().error("An unexpected exception occurred, we don't have any idea. Caused By: " + e.getMessage());
+                                processResult.addResult(error(e.getMessage(), processor));
+                            }
+                        }
+
+
+                        if (processResult.hasError()) {
+                             getThreadSafeCoreLogger().error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
+                        } else {
+                             getThreadSafeCoreLogger().info("Chain Execution ended, and nothing goes wrong");
                         }
                     }
-                }
-            });
+                });
 
+            } catch (Exception e) {
+                //意外错误
+                 getThreadSafeCoreLogger().error("Executor cannot be continued, Caused By: " + e.getCause());
+                processResult.addResult(error(e.getMessage(), getClass()));
+            }
         }
 
 
-        if (processResult.hasError()) {
-            System.out.println(processResult);
-            logger.error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
-        } else {
-            logger.info("Chain Execution ended, and nothing goes wrong");
-            System.out.println("推送结束，没有错误发生");
-        }
+
 
 
         return processResult;
     }
 
+    private Logger getThreadSafeCoreLogger() {
+        return LogUtil.getThreadSafeCoreLogger();
+    }
+
     @PreDestroy
     public void destroy() throws Exception {
-        logger.trace("Receive shutdown message, ProcessorChain will end when running processor threads end. ");
+         getThreadSafeCoreLogger().debug("Receive shutdown message, ProcessorChain will end when running processor threads end. ");
         EXECUTOR.shutdown();
         try {
             EXECUTOR.awaitTermination(1, TimeUnit.HOURS);
@@ -93,7 +101,7 @@ public class ProcessorChain {
             EXECUTOR.shutdownNow();
         }
 
-        logger.trace("ProcessorChain has shutdown.");
+         getThreadSafeCoreLogger().trace("ProcessorChain has shutdown.");
     }
 
     @Override
