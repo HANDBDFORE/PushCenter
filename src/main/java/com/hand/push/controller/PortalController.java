@@ -18,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Map;
+
+import static com.hand.push.util.ResponseHelper.failure;
+import static com.hand.push.util.ResponseHelper.success;
 
 @Controller
 @RequestMapping("/push")
@@ -26,11 +30,11 @@ public class PortalController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource(name = "processorChain")
-    private ProcessorChain processor;
+    private ProcessorChain processorChain;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public String printWelcome(@RequestParam("packet") String packetString) {
+    public Map<String, ?> printWelcome(@RequestParam("packet") String packetString) {
 
         PushRequest packet = build(packetString);
         logger.debug("Packet data is: " + packet.toString());
@@ -42,11 +46,16 @@ public class PortalController {
 
         Bundle bundle = new BundleImpl(packet, jobId);
 
-        ProcessResult re = processor.process(bundle);
+        ProcessResult re = processorChain.process(bundle);
 
         MDC.clear();
 
-        return "ok";
+        if (re.hasError())
+            return failure("任务创建时发生错误,具体原因是 " + re.getErrors()).result();
+        else
+            return success("您的推送请求已经接受，请稍后根据jobId查询结果").addBody("jobId", jobId).result();
+
+
     }
 
     private PushRequest build(String packetString) throws IllegalArgumentException {
