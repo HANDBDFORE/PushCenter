@@ -54,7 +54,7 @@ public class BundleImpl implements Bundle {
         processedList.addAll(output.getSuccesses());
 
         //添加失败项
-        for (ErrorRequestEntry error : output.getErrors()) {
+        for (ErrorEntry error : output.getErrors()) {
            processedList.addAll(error.getData());
         }
 

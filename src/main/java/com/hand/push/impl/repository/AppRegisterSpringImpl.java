@@ -1,7 +1,7 @@
 package com.hand.push.impl.repository;
 
+import com.hand.push.core.AppNotFoundException;
 import com.hand.push.core.LogUtil;
-import com.hand.push.core.PusherNotFoundException;
 import com.hand.push.core.domain.App;
 import com.hand.push.core.service.AppRegister;
 import com.hand.push.dto.PushApp;
@@ -51,7 +51,7 @@ public class AppRegisterSpringImpl implements AppRegister {
         }
 
         coreLogger.error("Cannot find corresponding app: " + packetRequestApp);
-        throw new PusherNotFoundException("AppRegisterSpringImpl 未找到需要的app: " + packetRequestApp);
+        throw new AppNotFoundException("AppRegisterSpringImpl 未找到需要的app: " + packetRequestApp);
     }
 
 

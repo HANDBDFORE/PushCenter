@@ -1,7 +1,7 @@
 package com.hand.push.core.service;
 
 
-import com.hand.push.core.PusherNotFoundException;
+import com.hand.push.core.AppNotFoundException;
 import com.hand.push.core.domain.App;
 import com.hand.push.dto.PushApp;
 
@@ -18,7 +18,7 @@ public interface AppRegister {
      *
      * @param requestAppPacket
      * @return
-     * @throws PusherNotFoundException 没找到app的时候，抛出此错误
+     * @throws com.hand.push.core.AppNotFoundException 没找到app的时候，抛出此错误
      */
-    public App loadApp(PushApp requestAppPacket) throws PusherNotFoundException;
+    public App loadApp(PushApp requestAppPacket) throws AppNotFoundException;
 }

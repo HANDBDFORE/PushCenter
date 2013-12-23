@@ -3,8 +3,6 @@ package com.hand.push.core.domain;
 import com.hand.push.dto.PushEntry;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,10 +12,10 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class NodeResult {
 
-    private final List<ErrorRequestEntry> errorEntries;
+    private final List<ErrorEntry> errorEntries;
 
     public NodeResult() {
-        errorEntries = new LinkedList<ErrorRequestEntry>();
+        errorEntries = new LinkedList<ErrorEntry>();
     }
 
     public static NodeResult empty() {
@@ -47,7 +45,7 @@ public class NodeResult {
         return errorEntries.size() != 0;
     }
 
-    public List<ErrorRequestEntry> getErrorList() {
+    public List<ErrorEntry> getErrorList() {
         return Collections.unmodifiableList(errorEntries);
     }
 
@@ -55,8 +53,8 @@ public class NodeResult {
 
         if (entries != null && (!entries.isEmpty()) && causedBy!= null){
             //1.根据cause类型，查看当前存储的错误信息中有没有相同原因的
-            ErrorRequestEntry sameCause = null;
-            for (ErrorRequestEntry stored : errorEntries) {
+            ErrorEntry sameCause = null;
+            for (ErrorEntry stored : errorEntries) {
                 if (stored.getCausedBy().getClass().equals(causedBy.getClass())) {
                     sameCause = stored;
                     break;
@@ -65,12 +63,12 @@ public class NodeResult {
 
             //说明没有相同原因的
             if (sameCause == null) {
-                errorEntries.add(new ErrorRequestEntry(causedBy,entries));
+                errorEntries.add(new ErrorEntry(causedBy,entries));
             } else {
                 //存在相同，合并
                 List<PushEntry> newList = new LinkedList<PushEntry>(sameCause.getData());
                 newList.addAll(entries);
-                ErrorRequestEntry yieldEntry = new ErrorRequestEntry(causedBy, newList);
+                ErrorEntry yieldEntry = new ErrorEntry(causedBy, newList);
 
                 errorEntries.remove(sameCause);
                 errorEntries.add(yieldEntry);

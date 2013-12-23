@@ -14,31 +14,31 @@ import java.util.Vector;
  * Time: 2:54 PM
  */
 public class OutputImpl implements Output{
-    private final Vector<ErrorRequestEntry> errors;
+    private final Vector<ErrorEntry> errors;
     private final Vector<PushEntry> success;
 
     public OutputImpl() {
-        errors = new Vector<ErrorRequestEntry>();
+        errors = new Vector<ErrorEntry>();
         success = new Vector<PushEntry>();
     }
 
     @Override
-    public Output addErrorEntries(List<ErrorRequestEntry> entries) {
-        for (ErrorRequestEntry error : entries) {
+    public Output addErrorEntries(List<ErrorEntry> entries) {
+        for (ErrorEntry error : entries) {
             yieldErrorEntries(error);
         }
         return this;
     }
 
     @Override
-    public Output addErrorEntry(ErrorRequestEntry entry) {
+    public Output addErrorEntry(ErrorEntry entry) {
         //TODO 重构add方式
         yieldErrorEntries(entry);
         return this;
     }
 
     @Override
-    public List<ErrorRequestEntry> getErrors() {
+    public List<ErrorEntry> getErrors() {
         return Collections.unmodifiableList(errors);
     }
 
@@ -59,12 +59,12 @@ public class OutputImpl implements Output{
         return Collections.unmodifiableList(success);
     }
 
-    private Output yieldErrorEntries(ErrorRequestEntry entry) {
+    private Output yieldErrorEntries(ErrorEntry entry) {
 
         if (entry.getData() != null && (!entry.getData().isEmpty()) && entry.getCausedBy()!= null){
             //1.根据cause类型，查看当前存储的错误信息中有没有相同原因的
-            ErrorRequestEntry sameCause = null;
-            for (ErrorRequestEntry stored : errors) {
+            ErrorEntry sameCause = null;
+            for (ErrorEntry stored : errors) {
                 if (stored.getCausedBy().getClass().equals(entry.getCausedBy().getClass())) {
                     sameCause = stored;
                     break;
@@ -78,7 +78,7 @@ public class OutputImpl implements Output{
                 //存在相同，合并
                 List<PushEntry> newList = new LinkedList<PushEntry>(sameCause.getData());
                 newList.addAll(entry.getData());
-                ErrorRequestEntry yieldEntry = new ErrorRequestEntry(entry.getCausedBy(), newList);
+                ErrorEntry yieldEntry = new ErrorEntry(entry.getCausedBy(), newList);
 
                 //更新
                 int index = errors.indexOf(sameCause);

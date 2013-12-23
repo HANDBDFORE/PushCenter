@@ -1,13 +1,11 @@
 package com.hand.push.impl.processors;
 
+import com.hand.push.core.AppNotFoundException;
 import com.hand.push.core.LogUtil;
 import com.hand.push.core.Processor;
 import com.hand.push.core.Pusher;
-import com.hand.push.core.PusherNotFoundException;
 import com.hand.push.core.domain.App;
 import com.hand.push.core.domain.Bundle;
-import com.hand.push.core.domain.NodeResult;
-import com.hand.push.core.domain.Output;
 import com.hand.push.core.service.AppRegister;
 import com.hand.push.dto.PushApp;
 import com.hand.push.dto.PushEntry;
@@ -64,7 +62,7 @@ public class PushProcessor implements Processor {
                 //推送
                 pusher.push(pushRequests,bundle.getOutput());
 
-            } catch (PusherNotFoundException pne) {
+            } catch (AppNotFoundException pne) {
                 logger.error(pne.getMessage());
             } catch (RuntimeException otherE) {
                 //捕获未知错误，收集数据返回
@@ -119,16 +117,16 @@ public class PushProcessor implements Processor {
      * @param platformName
      * @param pushers
      * @return
-     * @throws PusherNotFoundException
+     * @throws com.hand.push.core.AppNotFoundException
      */
-    private Pusher selectPusher(String platformName, List<Pusher> pushers) throws PusherNotFoundException {
+    private Pusher selectPusher(String platformName, List<Pusher> pushers) throws AppNotFoundException {
         for (Pusher pusher : pushers) {
             if (pusher.tellMeYourDeviceType().equals(platformName))
                 return pusher;
         }
 
         logger.error("Cannot find pusher by provided platformName:"+platformName+", please check your config.");
-        throw new PusherNotFoundException("未找到要求的推送器，请检查配置 " + platformName);
+        throw new AppNotFoundException("未找到要求的推送器，请检查配置 " + platformName);
 
     }
 

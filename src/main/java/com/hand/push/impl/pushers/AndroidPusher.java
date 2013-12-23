@@ -12,7 +12,7 @@ import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.Pusher;
-import com.hand.push.core.domain.ErrorRequestEntry;
+import com.hand.push.core.domain.ErrorEntry;
 import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
@@ -121,11 +121,11 @@ public final class AndroidPusher implements Pusher {
 
                     } else {
                         getLogger().error("error! Caused by: " + responseCode + ", data: " + entry);
-                        output.addErrorEntry(new ErrorRequestEntry(new PushFailureException("error! Caused by: " + responseCode), entry));
+                        output.addErrorEntry(new ErrorEntry(new PushFailureException("error! Caused by: " + responseCode), entry));
                     }
                 } catch (Exception e) {
                     getLogger().error("error! An unexpected exception occurred, I've no idea: " + entry);
-                    output.addErrorEntry(new ErrorRequestEntry(new PushFailureException("error! An unexpected exception occurred, I've no idea: "), entry));
+                    output.addErrorEntry(new ErrorEntry(new PushFailureException("error! An unexpected exception occurred, I've no idea: "), entry));
                 } finally {
                     endGate.countDown();
                 }
