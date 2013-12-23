@@ -3,32 +3,17 @@ package com.hand.push.core.domain;
 /**
  * Created with IntelliJ IDEA.
  * User: emerson
- * Date: 12/16/13
- * Time: 2:27 PM
+ * Date: 12/23/13
+ * Time: 11:26 AM
  */
 public class ErrorEntry {
-    private final String message;
-    private final Object data;
+    private final Throwable causedBy;
 
-    public ErrorEntry(String message, Object data) {
-        this.message = message;
-        this.data = data;
-
+    public ErrorEntry(Throwable causedBy) {
+        this.causedBy = causedBy;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    @Override
-    public String toString() {
-        return "ErrorEntry{" +
-                "message='" + message + '\'' +
-                ", data=" + data +
-                '}';
+    public Throwable getCausedBy() {
+        return causedBy;
     }
 }

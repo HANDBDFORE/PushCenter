@@ -68,10 +68,10 @@ public class PushProcessor implements Processor {
                 NodeResult pushResult = push(pushRequests, pusher);
 
                 //收集错误
-                result.addErrors(pushResult.getErrorList());
+                result.addError(pushResult.getErrorList());
 
             } catch (PusherNotFoundException pne) {
-                result.addError(pne.getMessage(), pushRequests);
+                result.addError(pne, pushRequests);
             } catch (RuntimeException otherE) {
                 //捕获未知错误，收集数据返回
                 logger.error("An unexpected error occurred, I've no idea: "+otherE.getCause());

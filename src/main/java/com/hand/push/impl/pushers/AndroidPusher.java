@@ -14,7 +14,6 @@ import com.hand.push.core.Pusher;
 import com.hand.push.core.domain.NodeResult;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
-import sun.util.logging.resources.logging;
 
 import java.util.ArrayList;
 import java.util.List;

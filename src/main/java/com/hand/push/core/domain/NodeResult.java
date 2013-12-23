@@ -1,8 +1,10 @@
 package com.hand.push.core.domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.hand.push.dto.PushEntry;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,14 +14,16 @@ import java.util.List;
  */
 public class NodeResult {
 
+    private final ConcurrentMap<Throwable,List<ErrorRequestEntry>> categoriedErrorEntries  = new ConcurrentHashMap<Throwable, List<ErrorRequestEntry>>();
 
-    protected final List<ErrorEntry> errorEntries;
+
+    private final List<ErrorRequestEntry> errorEntries;
 
     public NodeResult() {
-        errorEntries = new ArrayList<ErrorEntry>();
+        errorEntries = new LinkedList<ErrorRequestEntry>();
     }
 
-    public static  NodeResult empty(){
+    public static NodeResult empty() {
         return new NodeResult();
     }
 
@@ -27,28 +31,58 @@ public class NodeResult {
         return new NodeResult();
     }
 
-    public static NodeResult error(String message, Object source) {
-        return new NodeResult().addError(message, source);
+    public static NodeResult error(Throwable message, PushEntry source) {
+        return new NodeResult().addError(message, Arrays.asList(source));
 
     }
 
-    public NodeResult addError(String message, Object source) {
-        errorEntries.add(new ErrorEntry(message, source));
-        return this;
+    public static NodeResult error(Throwable message, List<PushEntry> source) {
+        return new NodeResult().addError(message,source) ;
+
     }
 
-    public NodeResult addErrors(List<ErrorEntry> errors) {
-        if (errors != null && (!errors.isEmpty()))
-            errorEntries.addAll(errors);
-        return this;
+
+    public NodeResult addError(Throwable causedBy, List<PushEntry> source) {
+        return this.yieldErrorEntries(causedBy,source);
     }
 
     public boolean hasError() {
         return errorEntries.size() != 0;
     }
 
-    public List<ErrorEntry> getErrorList() {
+    public List<ErrorRequestEntry> getErrorList() {
         return Collections.unmodifiableList(errorEntries);
+    }
+
+    private NodeResult yieldErrorEntries(Throwable causedBy, List<PushEntry> entries) {
+
+        if (entries != null && (!entries.isEmpty()) && causedBy!= null){
+            //1.根据cause类型，查看当前存储的错误信息中有没有相同原因的
+            ErrorRequestEntry sameCause = null;
+            for (ErrorRequestEntry stored : errorEntries) {
+                if (stored.getCausedBy().getClass().equals(causedBy.getClass())) {
+                    sameCause = stored;
+                    break;
+                }
+            }
+
+            //说明没有相同原因的
+            if (sameCause == null) {
+                errorEntries.add(new ErrorRequestEntry(causedBy,entries));
+            } else {
+                //存在相同，合并
+                List<PushEntry> newList = new LinkedList<PushEntry>(sameCause.getData());
+                newList.addAll(entries);
+                ErrorRequestEntry yieldEntry = new ErrorRequestEntry(causedBy, newList);
+
+                errorEntries.remove(sameCause);
+                errorEntries.add(yieldEntry);
+            }
+        }
+
+
+
+        return this;
     }
 
     @Override
