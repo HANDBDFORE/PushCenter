@@ -1,6 +1,9 @@
 package com.hand.push.core.domain;
 
+import com.hand.push.dto.PushEntry;
 import com.hand.push.dto.PushRequest;
+
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,12 +15,14 @@ public class BundleImpl implements Bundle {
 
     private final PushRequest packet;
     private final String jobId;
+    private final Output output;
+
 
     public BundleImpl(PushRequest packet, String jobId) {
-
-
         this.jobId = jobId;
         this.packet = packet;
+        output = new OutputImpl();
+
     }
 
     private void check(PushRequest packet, String jobId) throws IllegalArgumentException {
@@ -34,6 +39,32 @@ public class BundleImpl implements Bundle {
     public String getJobId() {
         return jobId;
     }
+
+    @Override
+    public Output getOutput() {
+        return output;
+    }
+
+
+    @Override
+    public List<PushEntry> getUnProcessedEntries() {
+        List<PushEntry> processedList = new LinkedList<PushEntry>();
+
+        //添加处理成功的项
+        processedList.addAll(output.getSuccesses());
+
+        //添加失败项
+        for (ErrorRequestEntry error : output.getErrors()) {
+           processedList.addAll(error.getData());
+        }
+
+        List<PushEntry> rawCopy = new LinkedList<PushEntry>(packet.getEntries());
+        rawCopy.removeAll(processedList);
+
+        return rawCopy;
+    }
+
+
 
     @Override
     public String toString() {

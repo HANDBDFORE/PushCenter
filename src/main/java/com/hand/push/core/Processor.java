@@ -17,7 +17,7 @@ public interface Processor {
      *
      * <b>注意：实现此接口时，请尽量将执行过程中产生的异常包装为直接结果进行返回，以便系统进行错误信息收集</b>
      * @param bundle 数据包
-     * @return 该节点处理结果
+     *
      */
-    public NodeResult process(Bundle bundle);
+    public void process(Bundle bundle);
 }

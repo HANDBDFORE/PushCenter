@@ -50,6 +50,7 @@ public class ProcessorChain {
         } else {
 
             try {
+
                 EXECUTOR.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -57,14 +58,16 @@ public class ProcessorChain {
 
                         for (Processor processor : processors) {
                             try {
-                                processResult.addResult(processor.process(bundle));
+                                processor.process(bundle);
                             } catch (Exception e) {
                                 //当一个节点出现问题时，采取继续执行的策略，以便后续节点能够执行
                                 getThreadSafeCoreLogger().error("An unexpected exception occurred, we don't have any idea. Caused By: " + e.getMessage());
-                                processResult.addResult(error(e.getMessage(), processor));
+                                //TODO 考虑这里怎么处理
+//                              processResult.addResult(error(e, processor));
                             }
                         }
 
+                        System.out.println(bundle.getOutput());
 
                         if (processResult.hasError()) {
                             getThreadSafeCoreLogger().error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
@@ -74,13 +77,14 @@ public class ProcessorChain {
                     }
                 });
 
-            }catch (RejectedExecutionException e){
+            } catch (RejectedExecutionException e) {
                 //TODO
 
-            }catch (Exception e) {
+            } catch (Exception e) {
                 //意外错误
                 getThreadSafeCoreLogger().error("Executor cannot be continued, Caused By: " + e.getCause());
-                processResult.addResult(error(e.getMessage(), getClass()));
+                //TODO 考虑这里怎么处理
+//                processResult.addResult(error(e, getClass()));
             }
         }
 

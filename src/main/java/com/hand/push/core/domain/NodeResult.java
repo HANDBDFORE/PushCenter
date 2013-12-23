@@ -14,9 +14,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class NodeResult {
 
-    private final ConcurrentMap<Throwable,List<ErrorRequestEntry>> categoriedErrorEntries  = new ConcurrentHashMap<Throwable, List<ErrorRequestEntry>>();
-
-
     private final List<ErrorRequestEntry> errorEntries;
 
     public NodeResult() {

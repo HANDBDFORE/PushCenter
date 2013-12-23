@@ -40,8 +40,34 @@ public class PushEntry {
         return message;
     }
 
+
     public void setMessage(String message) {
         this.message = message;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PushEntry pushEntry = (PushEntry) o;
+
+        if (count != pushEntry.count) return false;
+        if (!message.equals(pushEntry.message)) return false;
+        if (!platform.equals(pushEntry.platform)) return false;
+        if (!token.equals(pushEntry.token)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = platform.hashCode();
+        result = 31 * result + token.hashCode();
+        result = 31 * result + count;
+        result = 31 * result + message.hashCode();
+        return result;
     }
 
     @Override

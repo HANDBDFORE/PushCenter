@@ -2,6 +2,7 @@ package com.hand.push.core.domain;
 
 import com.hand.push.dto.PushEntry;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,11 @@ public class ErrorRequestEntry extends ErrorEntry {
     public ErrorRequestEntry(Throwable causedBy, List<PushEntry> data) {
         super(causedBy);
         this.data = new LinkedList<PushEntry>(data) ;
+
+    }
+
+    public ErrorRequestEntry(Throwable causedBy, PushEntry data) {
+       this(causedBy, Arrays.asList(data));
 
     }
 

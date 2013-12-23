@@ -1,6 +1,7 @@
 package com.hand.push.core;
 
 import com.hand.push.core.domain.NodeResult;
+import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 
 import java.util.List;
@@ -28,5 +29,5 @@ public interface Pusher {
      *
      * @param pushRequests
      */
-    public NodeResult push(List<PushEntry> pushRequests);
+    public void push(List<PushEntry> pushRequests,Output output);
 }

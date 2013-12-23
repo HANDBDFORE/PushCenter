@@ -7,6 +7,7 @@ import com.hand.push.core.PusherNotFoundException;
 import com.hand.push.core.domain.App;
 import com.hand.push.core.domain.Bundle;
 import com.hand.push.core.domain.NodeResult;
+import com.hand.push.core.domain.Output;
 import com.hand.push.core.service.AppRegister;
 import com.hand.push.dto.PushApp;
 import com.hand.push.dto.PushEntry;
@@ -36,12 +37,8 @@ public class PushProcessor implements Processor {
     private AppRegister register;
 
     @Override
-    public NodeResult process(Bundle bundle) {
+    public void process(Bundle bundle) {
         logger.debug("PushProcessor received bundle");
-
-
-        //构造空结果
-        NodeResult result =NodeResult.empty();
 
         //1.根据app，找到推送配置
         PushApp requestAppPacket = bundle.getPushPacket().getApp();
@@ -65,36 +62,22 @@ public class PushProcessor implements Processor {
                 Pusher pusher = selectPusher(platform, app.getPushers());
 
                 //推送
-                NodeResult pushResult = push(pushRequests, pusher);
-
-                //收集错误
-                result.addError(pushResult.getErrorList());
+                pusher.push(pushRequests,bundle.getOutput());
 
             } catch (PusherNotFoundException pne) {
-                result.addError(pne, pushRequests);
+                logger.error(pne.getMessage());
             } catch (RuntimeException otherE) {
                 //捕获未知错误，收集数据返回
                 logger.error("An unexpected error occurred, I've no idea: "+otherE.getCause());
-                result.addError("发生未知错误 " + otherE.getMessage(), pushRequests);
             }
 
         }
 
         logger.trace("process end");
 
-        return result;
     }
 
-    private NodeResult push(final List<PushEntry> requests, final Pusher pusher) {
-        final NodeResult result = new NodeResult();
 
-        NodeResult pushResult = pusher.push(requests);
-
-        if (pushResult.hasError())
-            result.addErrors(pushResult.getErrorList());
-
-        return result;
-    }
 
     /**
      * 将推送数据分组，形成
