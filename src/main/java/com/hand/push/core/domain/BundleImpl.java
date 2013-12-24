@@ -3,7 +3,8 @@ package com.hand.push.core.domain;
 import com.hand.push.dto.PushEntry;
 import com.hand.push.dto.PushRequest;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -54,16 +55,13 @@ public class BundleImpl implements Bundle {
         processedList.addAll(output.getSuccesses());
 
         //添加失败项
-        for (ErrorEntry error : output.getErrors()) {
-           processedList.addAll(error.getData());
-        }
+        processedList.addAll(output.getErrors().keySet());
 
         List<PushEntry> rawCopy = new LinkedList<PushEntry>(packet.getEntries());
         rawCopy.removeAll(processedList);
 
         return rawCopy;
     }
-
 
 
     @Override

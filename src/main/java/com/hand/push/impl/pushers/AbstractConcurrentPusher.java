@@ -2,7 +2,6 @@ package com.hand.push.impl.pushers;
 
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.Pusher;
-import com.hand.push.core.domain.ErrorEntry;
 import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
@@ -36,6 +35,10 @@ public abstract class AbstractConcurrentPusher implements Pusher {
 
     protected abstract Logger getLogger();
 
+    /**
+     * 当系统即将关闭时，调用此方法释放资源
+     * @throws Exception
+     */
     @PreDestroy
     public void destroy() throws Exception {
         getLogger().debug("Receive shutdown message, " + getClass().getSimpleName() + " will end when running processor threads end. ");
@@ -75,15 +78,18 @@ public abstract class AbstractConcurrentPusher implements Pusher {
             final Runnable task;
 
             try {
+                //各子类实现如何创建一个推送任务
                 task = getTask(pushRequest, output);
             } catch (Throwable e) {
                 //创建任务的过程中可能会产生异常，捕获后记录
                 e.printStackTrace();
                 getLogger().error("Create push thread error, " + e.getCause());
 
-                //创建线程过程出错，计数器递减，否则方法直到超时才会退出
+                //计数器递减，否则方法直到超时才会退出
                 endGate.countDown();
-                output.addErrorEntry(new ErrorEntry(e,pushRequest));
+
+                //写入错误信息
+                output.addErrorEntry(pushRequest,e);
 
                 //继续下一条
                 continue;
@@ -98,6 +104,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
                         //利用模板模式
                         task.run();
                     } finally {
+                        //计数器递减
                         endGate.countDown();
                     }
                 }

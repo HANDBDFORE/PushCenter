@@ -11,13 +11,11 @@ import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
-import com.hand.push.core.domain.ErrorEntry;
 import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Android 推送器，使用 个推 平台
@@ -82,11 +80,11 @@ public final class AndroidPusher extends AbstractConcurrentPusher {
 
                     } else {
                         getLogger().error("error! Caused by: " + responseCode + ", data: " + entry);
-                        output.addErrorEntry(new ErrorEntry(new PushFailureException("error! Caused by: " + responseCode), entry));
+                        output.addErrorEntry(entry,new PushFailureException("error! Caused by: " + responseCode));
                     }
                 } catch (Exception e) {
                     getLogger().error("error! An unexpected exception occurred, I've no idea: " + entry);
-                    output.addErrorEntry(new ErrorEntry(new PushFailureException("error! An unexpected exception occurred, I've no idea: "), entry));
+                    output.addErrorEntry(entry,new PushFailureException("error! An unexpected exception occurred, I've no idea: "));
                 }
             }
         };

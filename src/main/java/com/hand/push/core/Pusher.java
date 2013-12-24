@@ -1,6 +1,5 @@
 package com.hand.push.core;
 
-import com.hand.push.core.domain.NodeResult;
 import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 

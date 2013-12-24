@@ -1,7 +1,6 @@
 package com.hand.push.core;
 
 import com.hand.push.core.domain.Bundle;
-import com.hand.push.core.domain.ProcessResult;
 import org.slf4j.Logger;
 
 import javax.annotation.PreDestroy;
@@ -11,7 +10,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static com.hand.push.core.domain.NodeResult.error;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,57 +38,54 @@ public class ProcessorChain {
         getThreadSafeCoreLogger().debug("ProcessorChain init, " + processors.size() + " processors registered: " + toString());
     }
 
-    public ProcessResult process(final Bundle bundle) {
-        final ProcessResult processResult = ProcessResult.construct(bundle.getJobId());
+    public void process(final Bundle bundle) throws RejectedExecutionException {
 
         if (EXECUTOR.isShutdown()) {
-            processResult.addResult(error(new RejectedExecutionException("PushProcessor 试图在关闭系统期间继续执行新推送请求"), bundle.getPushPacket().getEntries()));
             getThreadSafeCoreLogger().error("PushProcessor attempt to execute processors while shutting down, push requests REJECTED.");
+            throw new RejectedExecutionException("系统正在关闭，拒绝执行");
 
-        } else {
-
-            try {
-
-                EXECUTOR.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        getThreadSafeCoreLogger().debug("ProcessorChain start to execute, bundle:" + bundle.toString());
-
-                        for (Processor processor : processors) {
-                            try {
-                                processor.process(bundle);
-                            } catch (Exception e) {
-                                //当一个节点出现问题时，采取继续执行的策略，以便后续节点能够执行
-                                getThreadSafeCoreLogger().error("An unexpected exception occurred, we don't have any idea. Caused By: " + e.getMessage());
-                                //TODO 考虑这里怎么处理
-//                              processResult.addResult(error(e, processor));
-                            }
-                        }
-
-                        System.out.println(bundle.getOutput());
-
-                        if (processResult.hasError()) {
-                            getThreadSafeCoreLogger().error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
-                        } else {
-                            getThreadSafeCoreLogger().info("Chain Execution ended, and nothing goes wrong");
-                        }
-                    }
-                });
-
-            } catch (RejectedExecutionException e) {
-                //TODO
-
-            } catch (Exception e) {
-                //意外错误
-                getThreadSafeCoreLogger().error("Executor cannot be continued, Caused By: " + e.getCause());
-                //TODO 考虑这里怎么处理
-//                processResult.addResult(error(e, getClass()));
-            }
         }
 
 
-        return processResult;
+        try {
+
+            EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    getThreadSafeCoreLogger().debug("ProcessorChain start to execute, bundle:" + bundle.toString());
+
+                    for (Processor processor : processors) {
+                        try {
+                            processor.process(bundle);
+                        } catch (Exception e) {
+                            //当一个节点出现问题时，采取继续执行的策略，以便后续节点能够执行
+                            getThreadSafeCoreLogger().error("An unexpected exception occurred, we don't have any idea. Caused By: " + e.getMessage());
+                        }
+                    }
+
+                    System.out.println(bundle.getOutput());
+
+                    //TODO 判断结果
+//                        if (processResult.hasError()) {
+//                            getThreadSafeCoreLogger().error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
+//                        } else {
+//                            getThreadSafeCoreLogger().info("Chain Execution ended, and nothing goes wrong");
+//                        }
+                }
+            });
+
+        } catch (RejectedExecutionException e) {
+            //TODO 如果不接受新请求，考虑如何处理
+            throw e;
+
+        } catch (Exception e) {
+            //意外错误
+            getThreadSafeCoreLogger().error("Executor cannot be continued, Caused By: " + e.getCause());
+            //TODO 考虑这里怎么处理
+//                processResult.addResult(error(e, getClass()));
+        }
     }
+
 
     private Logger getThreadSafeCoreLogger() {
         return LogUtil.getThreadSafeCoreLogger();
