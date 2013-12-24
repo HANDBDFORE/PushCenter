@@ -44,7 +44,7 @@ public class ProcessorChain {
         final ProcessResult processResult = ProcessResult.construct(bundle.getJobId());
 
         if (EXECUTOR.isShutdown()) {
-            processResult.addResult(error(new RequestRefusedException("PushProcessor 试图在关闭系统期间继续执行新推送请求"), bundle.getPushPacket().getEntries()));
+            processResult.addResult(error(new RejectedExecutionException("PushProcessor 试图在关闭系统期间继续执行新推送请求"), bundle.getPushPacket().getEntries()));
             getThreadSafeCoreLogger().error("PushProcessor attempt to execute processors while shutting down, push requests REJECTED.");
 
         } else {

@@ -11,18 +11,13 @@ import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
-import com.hand.push.core.Pusher;
 import com.hand.push.core.domain.ErrorEntry;
 import com.hand.push.core.domain.Output;
 import com.hand.push.dto.PushEntry;
 import org.slf4j.Logger;
 
-import javax.annotation.PreDestroy;
-import java.util.List;
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Android 推送器，使用 个推 平台
@@ -30,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  * @author Emerson
  */
 
-public final class AndroidPusher implements Pusher {
+public final class AndroidPusher extends AbstractConcurrentPusher {
     private static final String RESULT_CODE_SUCCESS = "ok";
     private static final String RESULT_CODE_KEY = "result";
 
@@ -38,8 +33,7 @@ public final class AndroidPusher implements Pusher {
     private final String appkey;
     private final String masterSecret;
     private final String api;
-
-    private static ExecutorService executor = Executors.newCachedThreadPool();
+    private final IIGtPush iGtPush;
 
     public AndroidPusher(String appid, String appkey, String masterSecret, String api) {
 
@@ -50,12 +44,8 @@ public final class AndroidPusher implements Pusher {
         this.masterSecret = masterSecret;
         this.api = api;
 
-
+        iGtPush = new IGtPush(api, appkey, masterSecret);
         getLogger().debug("Android Pusher inited, " + toString());
-    }
-
-    private Logger getLogger() {
-        return LogUtil.getThreadSafeCoreLogger();
     }
 
     private void check(String appid, String appkey, String masterSecret, String api) {
@@ -65,43 +55,13 @@ public final class AndroidPusher implements Pusher {
         if (api == null) throw new IllegalArgumentException("AndroidPusher 的 api 属性必须赋值");
     }
 
-
     @Override
     public String tellMeYourDeviceType() {
         return "Android";
     }
 
-
     @Override
-    public void push(List<PushEntry> pushRequests, Output output) {
-        CountDownLatch endGate = new CountDownLatch(pushRequests.size());
-
-
-        //并发推送
-        for (PushEntry pushRequest : pushRequests) {
-
-            executor.submit(putRecord(pushRequest, output, endGate));
-        }
-
-        try {
-            //等待推送线程结束
-            endGate.await(2, TimeUnit.DAYS);
-            getLogger().info("Android Pusher processes ended");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            //TODO 详细记录
-            getLogger().error("Timeout: ");
-        }
-    }
-
-    /**
-     * 将推送请求转化为一个FutureTask
-     *
-     * @param entry
-     * @return
-     */
-    private Runnable putRecord(final PushEntry entry, final Output output, final CountDownLatch endGate) {
-
+    protected Runnable getTask(final PushEntry entry,final Output output) throws PushFailureException {
         return new Runnable() {
             @Override
             public void run() {
@@ -110,7 +70,8 @@ public final class AndroidPusher implements Pusher {
                     Target target = generateTarget(entry);
                     SingleMessage message = generateMessage(template);
 
-                    IPushResult pushResult = pushMessage(target, message);
+                    IPushResult pushResult = iGtPush.pushMessageToSingle(message, target); //单推
+
 
                     String responseCode = pushResult.getResponse().get(RESULT_CODE_KEY).toString();
                     if (RESULT_CODE_SUCCESS.equals(responseCode)) {
@@ -126,24 +87,11 @@ public final class AndroidPusher implements Pusher {
                 } catch (Exception e) {
                     getLogger().error("error! An unexpected exception occurred, I've no idea: " + entry);
                     output.addErrorEntry(new ErrorEntry(new PushFailureException("error! An unexpected exception occurred, I've no idea: "), entry));
-                } finally {
-                    endGate.countDown();
                 }
             }
         };
     }
 
-
-    /**
-     * @param target1
-     * @param message
-     */
-    private IPushResult pushMessage(Target target1, SingleMessage message) {
-        IIGtPush push = new IGtPush(api, appkey, masterSecret);
-        // 单推
-        return push.pushMessageToSingle(message, target1);
-
-    }
 
     /**
      * @param template
@@ -184,6 +132,21 @@ public final class AndroidPusher implements Pusher {
         return template;
     }
 
+    @Override
+    protected Logger getLogger() {
+        return LogUtil.getThreadSafeCoreLogger();
+    }
+
+
+    @Override
+    protected void cleanUp() {
+        try {
+            iGtPush.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public String toString() {
@@ -193,19 +156,6 @@ public final class AndroidPusher implements Pusher {
                 ", masterSecret='" + masterSecret + '\'' +
                 ", api='" + api + '\'' +
                 '}';
-    }
-
-    @PreDestroy
-    public void destroy() throws Exception {
-        getLogger().debug("Receive shutdown message, AndroidPusher will end when running processor threads end. ");
-        executor.shutdown();
-        try {
-            executor.awaitTermination(1, TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-        }
-
-        getLogger().trace("AndroidPusher has shutdown.");
     }
 
 }
