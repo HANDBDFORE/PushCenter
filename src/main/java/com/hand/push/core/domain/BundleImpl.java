@@ -20,6 +20,8 @@ public class BundleImpl implements Bundle {
 
 
     public BundleImpl(PushRequest packet, String jobId) {
+        check(packet, jobId);
+
         this.jobId = jobId;
         this.packet = packet;
         output = new OutputImpl();
