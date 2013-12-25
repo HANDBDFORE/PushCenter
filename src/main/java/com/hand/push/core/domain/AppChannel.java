@@ -11,13 +11,13 @@ import java.util.List;
  * Date: 12/16/13
  * Time: 10:54 AM
  */
-public class App {
+public class AppChannel {
 
     private final List<Pusher> pushers;
     private final String appName;
     private final String appSecret;
 
-    public App(List<Pusher> pushers, String appName, String appSecret) {
+    public AppChannel(List<Pusher> pushers, String appName, String appSecret) {
         check(pushers, appName, appSecret);
         this.pushers = pushers;
         this.appName = appName;

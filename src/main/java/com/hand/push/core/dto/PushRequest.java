@@ -1,4 +1,4 @@
-package com.hand.push.dto;
+package com.hand.push.core.dto;
 
 import java.util.List;
 

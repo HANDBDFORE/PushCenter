@@ -1,4 +1,4 @@
-package com.hand.push.dto;
+package com.hand.push.core.dto;
 
 /**
  * Created with IntelliJ IDEA.

@@ -1,7 +1,7 @@
 package com.hand.push.core;
 
 import com.hand.push.core.domain.Output;
-import com.hand.push.dto.PushEntry;
+import com.hand.push.core.dto.PushEntry;
 
 import java.util.List;
 

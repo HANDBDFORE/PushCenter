@@ -1,7 +1,7 @@
 package com.hand.push.core.domain;
 
-import com.hand.push.dto.PushEntry;
-import com.hand.push.dto.PushRequest;
+import com.hand.push.core.dto.PushEntry;
+import com.hand.push.core.dto.PushRequest;
 
 import java.util.LinkedList;
 import java.util.List;

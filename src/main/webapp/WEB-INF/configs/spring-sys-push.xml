@@ -8,8 +8,10 @@
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>classpath:push-resources/Android-push-info.properties</value>
-                <value>classpath:push-resources/ios-push-info.properties</value>
+                <!-- hr系统使用-->
+                <value>classpath:push-resources/hr/Android-push-info.properties</value>
+                <value>classpath:push-resources/hr/ios-push-info.properties</value>
+                <!-- hr系统结束-->
             </list>
         </property>
         <property name="fileEncoding" value="utf-8"/>
@@ -35,7 +37,7 @@
             HR系统推送相关配置
         </description>
 
-        <bean id="hrApp" class="com.hand.push.core.domain.App">
+        <bean id="hrApp" class="com.hand.push.core.domain.AppChannel">
             <description>
                 HR系统推送相关配置
             </description>
@@ -49,26 +51,27 @@
             </constructor-arg>
         </bean>
 
-        <bean id="hrAndroidPusher" class="com.hand.push.impl.pushers.AndroidPusher">
+        <bean id="hrAndroidPusher" class="com.hand.push.impl.pushers.AndroidGeTuiPusher">
             <description>
                 使用个推进行android推送
             </description>
 
-            <constructor-arg name="appid" value="Ytk0ePKK6k65cRd8BGRN17"/>
-            <constructor-arg name="appkey" value="tYaDvmhEbj8VTgQYZaEJP4"/>
-            <constructor-arg name="masterSecret" value="xFrLUHKBEsAbkxlGKRsTu6"/>
-            <constructor-arg name="api" value="http://sdk.open.api.igexin.com/apiex.htm"/>
+            <constructor-arg name="appid" value="${androidpush.appid}"/>
+            <constructor-arg name="appkey" value="${androidpush.appkey}"/>
+            <constructor-arg name="masterSecret" value="${androidpush.mastersecret}"/>
+            <constructor-arg name="api" value="${androidpush.api}"/>
         </bean>
         <bean id="hriOSPusher" class="com.hand.push.impl.pushers.iOSPusher">
             <description>
                 iOS pusher
             </description>
 
-            <constructor-arg name="certificatePath" value="push-resources/hmbsng-apns-Development.p12"/>
+            <constructor-arg name="certificatePath" value="${dev-certificatePath}"/>
             <!--<constructor-arg name="certificatePath" value="push-resources/hmbsng-apns-Production.p12"/>-->
-            <constructor-arg name="certificatePassword" value="12345678"/>
+            <constructor-arg name="certificatePassword" value="${certificatePassword}"/>
             <constructor-arg name="isProduct" value="false"/>
             <!--<constructor-arg name="isProduct" value="true"/>-->
+            <!--<constructor-arg name="sound" value="default"/>-->
 
         </bean>
 

@@ -3,7 +3,7 @@ package com.hand.push.impl.pushers;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.Pusher;
 import com.hand.push.core.domain.Output;
-import com.hand.push.dto.PushEntry;
+import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
 
 import javax.annotation.PreDestroy;

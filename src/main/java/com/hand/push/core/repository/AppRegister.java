@@ -1,9 +1,9 @@
-package com.hand.push.core.service;
+package com.hand.push.core.repository;
 
 
 import com.hand.push.core.AppNotFoundException;
-import com.hand.push.core.domain.App;
-import com.hand.push.dto.PushApp;
+import com.hand.push.core.domain.AppChannel;
+import com.hand.push.core.dto.PushApp;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,5 +20,5 @@ public interface AppRegister {
      * @return
      * @throws com.hand.push.core.AppNotFoundException 没找到app的时候，抛出此错误
      */
-    public App loadApp(PushApp requestAppPacket) throws AppNotFoundException;
+    public AppChannel loadApp(PushApp requestAppPacket) throws AppNotFoundException;
 }

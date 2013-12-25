@@ -12,7 +12,7 @@ import com.gexin.rp.sdk.template.NotificationTemplate;
 import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.domain.Output;
-import com.hand.push.dto.PushEntry;
+import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ import java.io.IOException;
  * @author Emerson
  */
 
-public final class AndroidPusher extends AbstractConcurrentPusher {
+public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
     private static final String RESULT_CODE_SUCCESS = "ok";
     private static final String RESULT_CODE_KEY = "result";
 
@@ -33,7 +33,7 @@ public final class AndroidPusher extends AbstractConcurrentPusher {
     private final String api;
     private final IIGtPush iGtPush;
 
-    public AndroidPusher(String appid, String appkey, String masterSecret, String api) {
+    public AndroidGeTuiPusher(String appid, String appkey, String masterSecret, String api) {
 
         check(appid, appkey, masterSecret, api);
 
@@ -47,10 +47,10 @@ public final class AndroidPusher extends AbstractConcurrentPusher {
     }
 
     private void check(String appid, String appkey, String masterSecret, String api) {
-        if (appid == null) throw new IllegalArgumentException("AndroidPusher 的 appid 属性必须赋值");
-        if (appkey == null) throw new IllegalArgumentException("AndroidPusher 的 appkey 属性必须赋值");
-        if (masterSecret == null) throw new IllegalArgumentException("AndroidPusher 的 masterSecret 属性必须赋值");
-        if (api == null) throw new IllegalArgumentException("AndroidPusher 的 api 属性必须赋值");
+        if (appid == null) throw new IllegalArgumentException("AndroidGeTuiPusher 的 appid 属性必须赋值");
+        if (appkey == null) throw new IllegalArgumentException("AndroidGeTuiPusher 的 appkey 属性必须赋值");
+        if (masterSecret == null) throw new IllegalArgumentException("AndroidGeTuiPusher 的 masterSecret 属性必须赋值");
+        if (api == null) throw new IllegalArgumentException("AndroidGeTuiPusher 的 api 属性必须赋值");
     }
 
     @Override
@@ -148,7 +148,7 @@ public final class AndroidPusher extends AbstractConcurrentPusher {
 
     @Override
     public String toString() {
-        return "AndroidPusher{" +
+        return "AndroidGeTuiPusher{" +
                 "appid='" + appid + '\'' +
                 ", appkey='" + appkey + '\'' +
                 ", masterSecret='" + masterSecret + '\'' +
