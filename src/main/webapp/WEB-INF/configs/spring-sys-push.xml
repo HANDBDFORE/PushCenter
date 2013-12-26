@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
     <!-- 读取properties文件 -->
     <bean id="propertyConfigurer"
@@ -29,7 +33,6 @@
                 </array>
             </constructor-arg>
         </bean>
-
     </beans>
 
     <beans>
@@ -37,45 +40,38 @@
             HR系统推送相关配置
         </description>
 
-        <bean id="hrApp" class="com.hand.push.core.domain.AppChannel">
+
+        <bean id="hrApp" class="com.hand.push.core.domain.AppChannel"
+              c:appName="HR" c:appSecret="handhand" c:pushers-ref="hrAppPusherList">
+
             <description>
                 HR系统推送相关配置
             </description>
-            <constructor-arg name="appName" value="HR"/>
-            <constructor-arg name="appSecret" value="handhand"/>
-            <constructor-arg name="pushers">
-                <array>
-                    <ref bean="hrAndroidPusher"/>
-                    <ref bean="hriOSPusher"/>
-                </array>
-            </constructor-arg>
         </bean>
 
-        <bean id="hrAndroidPusher" class="com.hand.push.impl.pushers.AndroidGeTuiPusher">
+        <util:list id="hrAppPusherList">
+            <ref bean="hrAndroidPusher"/>
+            <ref bean="hriOSPusher"/>
+        </util:list>
+
+
+        <bean id="hrAndroidPusher" class="com.hand.push.impl.pushers.AndroidGeTuiPusher"
+              c:appid="${androidpush.appid}" c:appkey="${androidpush.appkey}"
+              c:masterSecret="${androidpush.mastersecret}" c:api="${androidpush.api}">
+
             <description>
                 使用个推进行android推送
             </description>
-
-            <constructor-arg name="appid" value="${androidpush.appid}"/>
-            <constructor-arg name="appkey" value="${androidpush.appkey}"/>
-            <constructor-arg name="masterSecret" value="${androidpush.mastersecret}"/>
-            <constructor-arg name="api" value="${androidpush.api}"/>
         </bean>
-        <bean id="hriOSPusher" class="com.hand.push.impl.pushers.iOSPusher">
+
+        <bean id="hriOSPusher" class="com.hand.push.impl.pushers.iOSPusher"
+              c:certificatePath="${product-certificatePath}"
+              c:certificatePassword="${certificatePassword}" c:isProduct="true"><!--c:sound="default" -->
+
             <description>
                 iOS pusher
             </description>
-
-            <constructor-arg name="certificatePath" value="${dev-certificatePath}"/>
-            <!--<constructor-arg name="certificatePath" value="push-resources/hmbsng-apns-Production.p12"/>-->
-            <constructor-arg name="certificatePassword" value="${certificatePassword}"/>
-            <constructor-arg name="isProduct" value="false"/>
-            <!--<constructor-arg name="isProduct" value="true"/>-->
-            <!--<constructor-arg name="sound" value="default"/>-->
-
         </bean>
-
     </beans>
-
 
 </beans>

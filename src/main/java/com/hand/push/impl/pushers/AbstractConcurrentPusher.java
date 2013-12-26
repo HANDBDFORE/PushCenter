@@ -35,23 +35,6 @@ public abstract class AbstractConcurrentPusher implements Pusher {
 
     protected abstract Logger getLogger();
 
-    /**
-     * 当系统即将关闭时，调用此方法释放资源
-     * @throws Exception
-     */
-    @PreDestroy
-    public void destroy() throws Exception {
-        getLogger().debug("Receive shutdown message, " + getClass().getSimpleName() + " will end when running processor threads end. ");
-        this.cleanUp();
-        EXECUTOR.shutdown();
-        try {
-            EXECUTOR.awaitTermination(1, TimeUnit.HOURS);
-        } catch (InterruptedException e) {
-            EXECUTOR.shutdownNow();
-        }
-
-        getLogger().trace(getClass().getSimpleName() + " has shutdown.");
-    }
 
     /**
      * 创建一个推送任务
@@ -65,6 +48,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
      * @throws PushFailureException
      */
     protected abstract Runnable getTask(final PushEntry entry, final Output output) throws PushFailureException;
+
 
     public void push(List<PushEntry> pushRequests, final Output output) {
         getLogger().debug(getClass().getSimpleName() + " called");
@@ -121,6 +105,24 @@ public abstract class AbstractConcurrentPusher implements Pusher {
             //TODO 详细记录
             getLogger().error("Timeout: ");
         }
+    }
+
+    /**
+     * 当系统即将关闭时，调用此方法释放资源
+     * @throws Exception
+     */
+    @PreDestroy
+    public void destroy() throws Exception {
+        getLogger().debug("Receive shutdown message, " + getClass().getSimpleName() + " will end when running processor threads end. ");
+        this.cleanUp();
+        EXECUTOR.shutdown();
+        try {
+            EXECUTOR.awaitTermination(1, TimeUnit.HOURS);
+        } catch (InterruptedException e) {
+            EXECUTOR.shutdownNow();
+        }
+
+        getLogger().trace(getClass().getSimpleName() + " has shutdown.");
     }
 
 }
