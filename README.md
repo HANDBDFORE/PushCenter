@@ -29,7 +29,7 @@ Java; Spring MVC; Hibernate
 
 ### 教程
 + 快速上手并使用系统 [Tutorial](https://github.com/HAND-MAS/PushCenter/wiki/Tutorial)
-+ 向系统中添加定制化功能 [System in Depth]()
++ 向系统中添加定制化功能 [System in Depth](https://github.com/HAND-MAS/PushCenter/wiki/System-in-Depth)
 + 系统架构介绍 [Architecture in Detail]()
 
 ## 系统介绍
