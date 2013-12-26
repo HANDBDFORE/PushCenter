@@ -41,7 +41,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
      *
      * <p></p>
      * 注意：如果在<b>创建</b>线程过程中发生错误（非线程执行错误），请将错误捕获并包装为 {@link com.hand.push.core.PushFailureException }，
-     * 并且，<b>无需将错误数据写入{@link com.hand.push.core.domain.Output}</b>，系统会自动捕获，否则会出现相同记录
+     * 并且，<b>无需将错误数据写入{@link com.hand.push.core.domain.Output}</b>，系统会自动捕获
      * @param entry
      * @param output
      * @return

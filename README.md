@@ -27,6 +27,11 @@ Java; Spring MVC; Hibernate
 + 目前全部的精力都放在对数据流的处理上，没有用户界面，查询推送结果只能查看日志或者手动查询数据库。
 + 目前采用每个请求新增一个线程的处理方式，虽然结合JDK6之后的多线程框架可以较好的提高并发能力，但后期打算采用NIO进行改进。
 
+### 教程
++ 快速上手并使用系统 [Tutorial](https://github.com/HAND-MAS/PushCenter/wiki/Tutorial)
++ 向系统中添加定制化功能 [System in Depth]()
++ 系统架构介绍 [Architecture in Detail]()
+
 ## 系统介绍
 --------
 本系统采用web application的部署形式，可使用HTTP和JMS两种方式对系统发送推送请求。请求到达后，系统解析出参数，根据现有的处理链条配置，将此次请求放置在一个线程单独处理，然后立即返回此任务的jobId，发送请求的一方可以根据此id稍后对结果进行查询  
