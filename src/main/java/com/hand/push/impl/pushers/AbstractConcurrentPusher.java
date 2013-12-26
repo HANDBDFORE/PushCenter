@@ -26,7 +26,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
     /**
      * 用于管理线程
      */
-    protected static ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+    protected final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
     /**
      * 对象销毁时清理
