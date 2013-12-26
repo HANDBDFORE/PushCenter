@@ -30,6 +30,7 @@
             <constructor-arg name="processors">
                 <array>
                     <ref bean="pushProcessor"/>
+                    <ref bean="DBProcessor"/>
                 </array>
             </constructor-arg>
         </bean>

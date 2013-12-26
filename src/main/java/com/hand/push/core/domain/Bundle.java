@@ -20,4 +20,6 @@ public interface Bundle {
     public Output getOutput();
 
     public List<PushEntry> getUnProcessedEntries();
+
+    public long createDate();
 }

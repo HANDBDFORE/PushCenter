@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <tx:annotation-driven transaction-manager="hbTransactionManager"/>
+
+    <!--UM系统的 TransactionManager -->
+    <bean id="hbTransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" >
+        <property name="sessionFactory" ref="SessionFactory"/>
+    </bean>
+
+    <!--UM系统的SessionFactory -->
+    <bean id="SessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <!--指定Hibernate核心配置文件-->
+        <property name="configLocation" value="/WEB-INF/configs/hibernate.cfg.xml"/>
+        <property name="packagesToScan">
+            <list>
+                <value>com.hand.push.core.dto</value>
+            </list>
+        </property>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@192.168.106.65:1521:mas"/>
+        <property name="username" value="hec2"/>
+        <property name="password" value="hec2"/>
+    </bean>
+</beans>

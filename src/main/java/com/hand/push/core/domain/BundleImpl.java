@@ -17,7 +17,7 @@ public class BundleImpl implements Bundle {
     private final PushRequest packet;
     private final String jobId;
     private final Output output;
-
+    private final long timestamp;
 
     public BundleImpl(PushRequest packet, String jobId) {
         check(packet, jobId);
@@ -25,7 +25,7 @@ public class BundleImpl implements Bundle {
         this.jobId = jobId;
         this.packet = packet;
         output = new OutputImpl();
-
+        this.timestamp = System.currentTimeMillis();
     }
 
     private void check(PushRequest packet, String jobId) throws IllegalArgumentException {
@@ -65,6 +65,10 @@ public class BundleImpl implements Bundle {
         return rawCopy;
     }
 
+    @Override
+    public long createDate() {
+        return this.timestamp;
+    }
 
     @Override
     public String toString() {
