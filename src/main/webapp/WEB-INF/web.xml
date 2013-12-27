@@ -10,9 +10,9 @@
         <param-name>contextConfigLocation</param-name>
         <!--/WEB-INF/configs/spring-jms-config.xml,-->
         <param-value>
-            /WEB-INF/configs/UM-spring-hibernate-config.xml,
+            /WEB-INF/configs/spring-hibernate-sys-config.xml,
 
-            /WEB-INF/configs/spring-sys-push.xml ,
+            /WEB-INF/configs/spring-sys-appChannel.xml ,
             /WEB-INF/configs/spring-sys-processors.xml
         </param-value>
     </context-param>
