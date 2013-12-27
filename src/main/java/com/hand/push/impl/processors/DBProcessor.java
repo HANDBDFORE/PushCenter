@@ -23,11 +23,13 @@ import java.util.Set;
  * Time: 上午11:04
  * To change this template use File | Settings | File Templates.
  */
-@Component("DBProcessor")
 public class DBProcessor implements Processor {
 
-    @Resource(name = "SessionFactory")
-    private   SessionFactory sessionFactory;
+    private SessionFactory sessionFactory;
+
+    public DBProcessor(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)

@@ -1,10 +1,10 @@
 package com.hand.push.impl.pushers;
 
-import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.domain.Output;
 import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,17 +18,15 @@ public class FakeiOSPusher extends AbstractConcurrentPusher{
 
     }
 
-    @Override
-    protected Logger getLogger() {
-        return LogUtil.getThreadSafeCoreLogger();
-    }
+
 
     @Override
-    protected Runnable getTask(PushEntry entry, Output output) throws PushFailureException {
+    protected Runnable getTask(final PushEntry entry, Output output) throws PushFailureException {
         return new Runnable() {
             @Override
             public void run() {
                 try {
+                    getLogger().debug("ios pusher push "+entry);
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -40,5 +38,9 @@ public class FakeiOSPusher extends AbstractConcurrentPusher{
     @Override
     public String tellMeYourDeviceType() {
         return "iphone";
+    }
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 }

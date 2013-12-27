@@ -2,6 +2,7 @@ package com.hand.push.core;
 
 import com.hand.push.core.domain.Bundle;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
@@ -63,14 +64,8 @@ public class ProcessorChain {
                         }
                     }
 
-                    System.out.println(bundle.getOutput());
 
-                    //TODO 判断结果
-//                        if (processResult.hasError()) {
-//                            getThreadSafeCoreLogger().error("Execution ended, but there're something error happened during the execution: " + processResult.getErrors().toString());
-//                        } else {
-//                            getThreadSafeCoreLogger().info("Chain Execution ended, and nothing goes wrong");
-//                        }
+                    getThreadSafeCoreLogger().info("Chain Execution ended");
                 }
             });
 
@@ -88,7 +83,7 @@ public class ProcessorChain {
 
 
     private Logger getThreadSafeCoreLogger() {
-        return LogUtil.getThreadSafeCoreLogger();
+        return LoggerFactory.getLogger(getClass());
     }
 
     @PreDestroy

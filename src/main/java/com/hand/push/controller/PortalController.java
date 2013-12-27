@@ -25,8 +25,6 @@ import static com.hand.push.util.ResponseHelper.success;
 @RequestMapping("/push")
 public class PortalController {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     @Resource(name = "processorChain")
     private ProcessorChain processorChain;
 
@@ -35,10 +33,10 @@ public class PortalController {
     public Map<String, ?> printWelcome(@RequestParam("packet") String packetString) {
 
         PushRequest packet = build(packetString);
-        logger.debug("Packet data is: " + packet.toString());
+        getLogger().debug("Packet data is: " + packet.toString());
 
         String jobId = DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis()));
-        logger.info("jobId generated: " + jobId);
+        getLogger().info("jobId generated: " + jobId);
 
         MDC.put("jobId", jobId);
 
@@ -56,12 +54,16 @@ public class PortalController {
     private PushRequest build(String packetString) throws IllegalArgumentException {
 
         if (StringUtils.isEmpty(packetString)) {
-            logger.error("parameter[packet] is empty, request denied.");
+            getLogger().error("parameter[packet] is empty, request denied.");
             throw new IllegalArgumentException("消息不能为空");
         }
 
 
         return JsonHelper.stringToJson(packetString, PushRequest.class);
+    }
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 
 

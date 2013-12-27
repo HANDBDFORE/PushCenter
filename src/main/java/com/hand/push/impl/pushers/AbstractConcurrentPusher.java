@@ -5,6 +5,7 @@ import com.hand.push.core.Pusher;
 import com.hand.push.core.domain.Output;
 import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
@@ -33,7 +34,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
      */
     protected abstract void cleanUp();
 
-    protected abstract Logger getLogger();
+
 
 
     /**
@@ -52,7 +53,9 @@ public abstract class AbstractConcurrentPusher implements Pusher {
 
 
     public void push(List<PushEntry> pushRequests, final Output output) {
-        getLogger().debug(getClass().getSimpleName() + " called");
+        Logger logger = getLogger();
+
+        logger.debug(tellMeYourDeviceType() + " pusher called");
 
         //使用闭锁来达到“所有推送线程都执行完毕，此方法才退出”的效果
         final CountDownLatch endGate = new CountDownLatch(pushRequests.size());
@@ -68,7 +71,7 @@ public abstract class AbstractConcurrentPusher implements Pusher {
             } catch (Throwable e) {
                 //创建任务的过程中可能会产生异常，捕获后记录
                 e.printStackTrace();
-                getLogger().error("Create push thread error, " + e.getCause());
+                logger.error("Create push thread error, " + e.getCause());
 
                 //计数器递减，否则方法直到超时才会退出
                 endGate.countDown();
@@ -100,11 +103,11 @@ public abstract class AbstractConcurrentPusher implements Pusher {
         try {
             //等待该批次所有推送线程结束
             endGate.await(1, TimeUnit.DAYS);
-            getLogger().info(getClass().getSimpleName() + " processes ended");
+            logger.info(tellMeYourDeviceType() + " pusher processes ended");
         } catch (InterruptedException e) {
             e.printStackTrace();
             //TODO 详细记录
-            getLogger().error("Timeout: ");
+            logger.error("Timeout: ");
         }
     }
 
@@ -114,7 +117,8 @@ public abstract class AbstractConcurrentPusher implements Pusher {
      */
     @PreDestroy
     public void destroy() throws Exception {
-        getLogger().debug("Receive shutdown message, " + getClass().getSimpleName() + " will end when running processor threads end. ");
+        Logger logger = getLogger();
+        logger.debug("Receive shutdown message, " + tellMeYourDeviceType() + " will end when running processor threads end. ");
         this.cleanUp();
         EXECUTOR.shutdown();
         try {
@@ -123,7 +127,11 @@ public abstract class AbstractConcurrentPusher implements Pusher {
             EXECUTOR.shutdownNow();
         }
 
-        getLogger().trace(getClass().getSimpleName() + " has shutdown.");
+        logger.trace(getClass().getSimpleName() + " has shutdown.");
+    }
+
+    private  Logger getLogger(){
+        return LoggerFactory.getLogger(getClass());
     }
 
 }

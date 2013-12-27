@@ -28,7 +28,7 @@
         </sift>
     </appender>
 
-    <logger name="core" level="trace" >
+    <logger name="com.hand.push" level="trace" >
         <appender-ref ref="SIFT" />
     </logger>
 

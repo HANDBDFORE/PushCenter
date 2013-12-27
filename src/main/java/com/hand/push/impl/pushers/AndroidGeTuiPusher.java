@@ -9,11 +9,11 @@ import com.gexin.rp.sdk.base.impl.SingleMessage;
 import com.gexin.rp.sdk.base.impl.Target;
 import com.gexin.rp.sdk.http.IGtPush;
 import com.gexin.rp.sdk.template.NotificationTemplate;
-import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.domain.Output;
 import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -63,6 +63,7 @@ public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
         return new Runnable() {
             @Override
             public void run() {
+                Logger logger = getLogger();
                 try {
                     NotificationTemplate template = generateNotificationTemplate(entry);
                     Target target = generateTarget(entry);
@@ -75,15 +76,15 @@ public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
                     if (RESULT_CODE_SUCCESS.equals(responseCode)) {
                         //推送成功
                         output.addSuccessEntry(entry);
-                        getLogger().trace("success: " + entry);
+                        logger.trace("success: " + entry);
 
 
                     } else {
-                        getLogger().error("error! Caused by: " + responseCode + ", data: " + entry);
+                        logger.error("error! Caused by: " + responseCode + ", data: " + entry);
                         output.addErrorEntry(entry,new PushFailureException("error! Caused by: " + responseCode));
                     }
                 } catch (Exception e) {
-                    getLogger().error("error! An unexpected exception occurred, I've no idea: " + entry);
+                    logger.error("error! An unexpected exception occurred, I've no idea: " + entry);
                     output.addErrorEntry(entry,new PushFailureException("error! An unexpected exception occurred, I've no idea: "));
                 }
             }
@@ -130,9 +131,9 @@ public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
         return template;
     }
 
-    @Override
-    protected Logger getLogger() {
-        return LogUtil.getThreadSafeCoreLogger();
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 
 

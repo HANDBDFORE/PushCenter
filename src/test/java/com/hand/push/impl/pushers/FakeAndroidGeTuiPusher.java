@@ -1,10 +1,10 @@
 package com.hand.push.impl.pushers;
 
-import com.hand.push.core.LogUtil;
 import com.hand.push.core.PushFailureException;
 import com.hand.push.core.domain.Output;
 import com.hand.push.core.dto.PushEntry;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,10 +18,6 @@ public class FakeAndroidGeTuiPusher extends AbstractConcurrentPusher{
 
     }
 
-    @Override
-    protected Logger getLogger() {
-        return LogUtil.getThreadSafeCoreLogger();
-    }
 
     @Override
     protected Runnable getTask(final PushEntry entry, Output output) throws PushFailureException {
@@ -41,5 +37,10 @@ public class FakeAndroidGeTuiPusher extends AbstractConcurrentPusher{
     @Override
     public String tellMeYourDeviceType() {
         return "Android";
+    }
+
+
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
     }
 }

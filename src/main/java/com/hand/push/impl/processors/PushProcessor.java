@@ -1,7 +1,6 @@
 package com.hand.push.impl.processors;
 
 import com.hand.push.core.AppNotFoundException;
-import com.hand.push.core.LogUtil;
 import com.hand.push.core.Processor;
 import com.hand.push.core.Pusher;
 import com.hand.push.core.domain.AppChannel;
@@ -10,6 +9,7 @@ import com.hand.push.core.dto.PushApp;
 import com.hand.push.core.dto.PushEntry;
 import com.hand.push.core.repository.AppRegister;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,15 +26,18 @@ import java.util.Map;
  * Date: 12/13/13
  * Time: 5:08 PM
  */
-@Service("pushProcessor")
 public class PushProcessor implements Processor {
 
-    private final Logger logger = LogUtil.getThreadSafeCoreLogger();
-    @Resource(name = "appRegisterSpringImpl")
     private AppRegister register;
+
+    public PushProcessor(AppRegister register) {
+        this.register = register;
+    }
 
     @Override
     public void process(Bundle bundle) {
+        Logger logger = getLogger();
+
         logger.debug("PushProcessor received bundle");
 
         //1.根据app，找到推送配置
@@ -74,6 +77,10 @@ public class PushProcessor implements Processor {
 
     }
 
+    private Logger getLogger() {
+        return LoggerFactory.getLogger(getClass());
+    }
+
     /**
      * 将推送数据分组，形成
      * {
@@ -81,7 +88,6 @@ public class PushProcessor implements Processor {
      * {"message":"..","token":".."},
      * ...
      * ],
-     * <p/>
      * "iphone":[
      * {"message":"..","token":".."},
      * ...
@@ -123,10 +129,8 @@ public class PushProcessor implements Processor {
                 return pusher;
         }
 
-        logger.error("Cannot find pusher by provided platformName:" + platformName + ", please check your config.");
+        getLogger().error("Cannot find pusher by provided platformName:" + platformName + ", please check your config.");
         throw new AppNotFoundException("未找到要求的推送器，请检查配置 " + platformName);
 
     }
-
-
 }
