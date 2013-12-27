@@ -13,8 +13,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -34,37 +33,51 @@ public class DBProcessor implements Processor {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void process(Bundle bundle) {
-        bundle.getPushPacket().getEntries().size()  ;
+        // 1. get push source data
+        PushJob pushJob = getPushSourceData(bundle);
 
-        Output output = bundle.getOutput();
-
+        // 2. save to db
         Session session = sessionFactory.getCurrentSession();
-        PushJob pushJob = new PushJob(bundle.getJobId(),bundle.createDate(),System.currentTimeMillis(),bundle.getPushPacket().getApp().getKey(),bundle.getPushPacket().getEntries().size(),output.getSuccesses().size(),output.getErrors().size(),bundle.getUnProcessedEntries().size());
-//        session.save(pushJob);
-        Set<JobResult> jobResults =new HashSet<JobResult>();
+        session.save(pushJob);
+    }
 
+    /*
+    *    获得 PushJob 和  <set>JobResult 数据
+    *    @Paramater Bundle bundle 数据来源
+    * */
+    private PushJob getPushSourceData(Bundle bundle){
+        PushJob pushJob =bundleToPushJob(bundle);
+        Output output = bundle.getOutput();
+        Set<JobResult> jobResults =new HashSet<JobResult>();
         for (PushEntry pushEntry : output.getSuccesses()) {
-            jobResults.add(JobResult.success(pushJob, pushEntry));
+            jobResults.add(JobResult.getJobResult(pushJob, pushEntry).success());
         }
 
         Set<PushEntry> errorKeyset = output.getErrors().keySet();
         for (PushEntry pushEntry : errorKeyset) {
-            jobResults.add(JobResult.failure(pushJob,pushEntry,output.getErrors().get(pushEntry).toString()));
+            jobResults.add(JobResult.getJobResult(pushJob, pushEntry).failure(output.getErrors().get(pushEntry).toString()));
         }
 
         for (PushEntry pushEntry : bundle.getUnProcessedEntries()) {
-            jobResults.add(JobResult.unProcess(pushJob, pushEntry));
+            jobResults.add(JobResult.getJobResult(pushJob, pushEntry));
         }
 
         pushJob.setJobResultSet(jobResults);
-        session.save(pushJob);
-
+        return pushJob;
     }
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED)
-//    public static void main(String[] args) {
-//        Session session = sessionFactory.getCurrentSession();
-//        PushJob pushJob = new PushJob("debug",123,"debugApp",3,2,1,0);
-//        session.save(pushJob);
-//    }
+    /*
+  *   Bundle 相关数据转换为 PushJob 的数据
+  * */
+    private static PushJob bundleToPushJob(Bundle bundle){
+        PushJob pushJob = new PushJob();
+        pushJob.setJobId(bundle.getJobId());
+        pushJob.setAppName(bundle.getPushPacket().getApp().getKey());
+        pushJob.setCreateTimeStamp(bundle.createDate());
+        pushJob.setPushCount(bundle.getPushPacket().getEntries().size());
+        pushJob.setFailureCount(bundle.getOutput().getErrors().size());
+        pushJob.setSuccessCount(bundle.getOutput().getSuccesses().size());
+        return pushJob;
+    }
 }
+

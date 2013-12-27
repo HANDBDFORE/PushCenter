@@ -24,8 +24,8 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@192.168.106.65:1521:mas"/>
-        <property name="username" value="hec2"/>
-        <property name="password" value="hec2"/>
+        <property name="url" value="jdbc:oracle:thin:@192.168.11.65:1521:masdev"/>
+        <property name="username" value="hec2test"/>
+        <property name="password" value="hec2test"/>
     </bean>
 </beans>

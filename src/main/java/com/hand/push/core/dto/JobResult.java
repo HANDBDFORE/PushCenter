@@ -28,50 +28,35 @@ public class JobResult {
     private String message;
     private String errormsg;
 
-
     public JobResult() {
     }
 
-    public static JobResult success(PushJob pushJob, PushEntry pushEntry) {
+    public static JobResult getJobResult(PushJob pushJob,PushEntry pushEntry) {
         JobResult result = new JobResult();
-
         result.pushJob = pushJob;
         result.platform = pushEntry.getPlatform();
         result.token = pushEntry.getToken();
         result.count = pushEntry.getCount();
         result.message = pushEntry.getMessage();
-        result.errormsg = null;
-        result.status = Type.Success;
-
         return result;
     }
 
-    public static JobResult failure(PushJob pushJob, PushEntry pushEntry, String errormsg) {
-        JobResult result = new JobResult();
-
-        result.pushJob = pushJob;
-        result.platform = pushEntry.getPlatform();
-        result.token = pushEntry.getToken();
-        result.count = pushEntry.getCount();
-        result.message = pushEntry.getMessage();
-        result.errormsg = errormsg;
-        result.status = Type.Failure;
-
-        return result;
+    public  JobResult success() {
+        this.errormsg = null;
+        this.status = Type.Success;
+        return this;
     }
 
-    public static JobResult unProcess(PushJob pushJob, PushEntry pushEntry) {
-        JobResult result = new JobResult();
+    public  JobResult failure(String errormsg) {
+        this.errormsg = errormsg;
+        this.status = Type.Failure;
+        return this;
+    }
 
-        result.pushJob = pushJob;
-        result.platform = pushEntry.getPlatform();
-        result.token = pushEntry.getToken();
-        result.count = pushEntry.getCount();
-        result.message = pushEntry.getMessage();
-        result.errormsg = null;
-        result.status = Type.UnProcess;
-
-        return result;
+    public  JobResult unProcess() {
+        this.errormsg = null;
+        this.status = Type.UnProcess;
+        return this;
     }
 
     public Type getStatus() {

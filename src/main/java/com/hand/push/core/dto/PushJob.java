@@ -1,5 +1,7 @@
 package com.hand.push.core.dto;
 
+import com.hand.push.core.domain.Bundle;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
