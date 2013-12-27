@@ -8,27 +8,27 @@
     <context:component-scan base-package="com.hand.push"/>
 
     <!-- jms -->
-    <!--<bean id="amq.connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">-->
-        <!--<property name="brokerURL"-->
-                  <!--value="tcp://localhost:61616?jms.redeliveryPolicy.maximumRedeliveries=1" />-->
-    <!--</bean>-->
+    <bean id="amq.connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL"
+                  value="tcp://localhost:61616?jms.redeliveryPolicy.maximumRedeliveries=1" />
+    </bean>
 
-    <!--<bean id="consumer.connectionFactory"-->
-          <!--class="org.springframework.jms.connection.SingleConnectionFactory">-->
-        <!--<constructor-arg ref="amq.connectionFactory" />-->
-    <!--</bean>-->
+    <bean id="consumer.connectionFactory"
+          class="org.springframework.jms.connection.SingleConnectionFactory">
+        <constructor-arg ref="amq.connectionFactory" />
+    </bean>
 
 
-    <!--<bean id="consumer.jmsContainer"-->
-          <!--class="org.springframework.jms.listener.DefaultMessageListenerContainer">-->
-        <!--<property name="connectionFactory" ref="consumer.connectionFactory" />-->
-        <!--<property name="destination" ref="destination" />-->
-        <!--<property name="messageListener" ref="PushNotificationListener" />-->
-        <!--<property name="pubSubNoLocal" value="false" />-->
-    <!--</bean>-->
+    <bean id="consumer.jmsContainer"
+          class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="consumer.connectionFactory" />
+        <property name="destination" ref="destination" />
+        <property name="messageListener" ref="PushNotificationListener" />
+        <property name="pubSubNoLocal" value="false" />
+    </bean>
 
-    <!--<bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">-->
-        <!--<constructor-arg index="0" value="push.topic" />-->
-    <!--</bean>-->
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQTopic">
+        <constructor-arg index="0" value="push.topic" />
+    </bean>
 
 </beans>

@@ -37,3 +37,6 @@ Java; Spring MVC; Hibernate
 本系统采用web application的部署形式，可使用HTTP和JMS两种方式对系统发送推送请求。请求到达后，系统解析出参数，根据现有的处理链条配置，将此次请求放置在一个线程单独处理，然后立即返回此任务的jobId，发送请求的一方可以根据此id稍后对结果进行查询  
 系统大致处理流程如下图
 <img src="http://dl.iteye.com/upload/picture/pic/129003/0d736416-9cf8-3dca-ac95-d5dde85d4b4d.png"/>
+
+### 架构图
+<img src="http://dl.iteye.com/upload/picture/pic/129009/e2cbde61-6ecd-381a-80c3-b182a23cb2d2.png"/>

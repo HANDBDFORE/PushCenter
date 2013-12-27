@@ -8,8 +8,8 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
+        <!--/WEB-INF/configs/spring-jms-config.xml,-->
         <param-value>
-            /WEB-INF/configs/spring-jms-config.xml,
             /WEB-INF/configs/UM-spring-hibernate-config.xml,
 
             /WEB-INF/configs/spring-sys-push.xml ,
