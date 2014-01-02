@@ -5,12 +5,12 @@
 
     <tx:annotation-driven transaction-manager="hbTransactionManager"/>
 
-    <!--UM系统的 TransactionManager -->
+    <!--TransactionManager -->
     <bean id="hbTransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager" >
         <property name="sessionFactory" ref="SessionFactory"/>
     </bean>
 
-    <!--UM系统的SessionFactory -->
+    <!--SessionFactory -->
     <bean id="SessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <!--指定Hibernate核心配置文件-->
         <property name="configLocation" value="/WEB-INF/configs/hibernate.cfg.xml"/>
