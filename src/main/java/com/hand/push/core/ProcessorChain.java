@@ -76,8 +76,7 @@ public class ProcessorChain {
         } catch (Exception e) {
             //意外错误
             getThreadSafeCoreLogger().error("Executor cannot be continued, Caused By: " + e.getCause());
-            //TODO 考虑这里怎么处理
-//                processResult.addResult(error(e, getClass()));
+            throw new RejectedExecutionException(e.getMessage());
         }
     }
 
