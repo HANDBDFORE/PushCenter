@@ -4,6 +4,7 @@ import com.hand.push.core.domain.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,7 +30,8 @@ public class ProcessorChain {
 
 
     static {
-        EXECUTOR = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        //由于是IO密集型任务，所以不采用newFixedThreadPool
+        EXECUTOR = Executors.newCachedThreadPool();
     }
 
 
@@ -84,6 +86,7 @@ public class ProcessorChain {
         return LoggerFactory.getLogger(getClass());
     }
 
+    @PreDestroy
     public void destroy() throws Exception {
         getLogger().debug("Receive shutdown message, ProcessorChain will end when running processor threads end. ");
         EXECUTOR.shutdown();

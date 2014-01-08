@@ -10,9 +10,7 @@ import com.hand.push.core.dto.PushEntry;
 import com.hand.push.core.repository.AppRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +39,10 @@ public class PushProcessor implements Processor {
         logger.debug("PushProcessor received bundle");
 
         //1.根据app，找到推送配置
-        PushApp requestAppPacket = bundle.getPushPacket().getApp();
+        PushApp requestApp = bundle.getPushPacket().getApp();
 
         //2.获取推送器
-        AppChannel appChannel = register.loadApp(requestAppPacket);
+        AppChannel appChannel = register.loadApp(requestApp);
         logger.trace("appChannel acquired :" + appChannel);
 
 

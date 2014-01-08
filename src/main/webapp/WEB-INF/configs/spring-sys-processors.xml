@@ -13,7 +13,7 @@
             系统节点配置
         </description>
 
-        <bean id="processorChain" class="com.hand.push.core.ProcessorChain" destroy-method="destroy">
+        <bean id="processorChain" class="com.hand.push.core.ProcessorChain">
             <constructor-arg name="processors">
                 <array>
                     <ref bean="pushProcessor"/>
