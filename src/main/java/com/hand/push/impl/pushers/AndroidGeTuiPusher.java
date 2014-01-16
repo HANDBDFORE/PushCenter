@@ -34,6 +34,11 @@ public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
     private final IIGtPush iGtPush;
 
     public AndroidGeTuiPusher(String appid, String appkey, String masterSecret, String api) {
+        this(appid, appkey, masterSecret, api, CORE_WORKERS, MAX_WORKERS, QUEUE_CAPACITY);
+    }
+
+    public AndroidGeTuiPusher(String appid, String appkey, String masterSecret, String api,int coreWorkers, int maxWorkers, int queueCapacity) {
+        super(coreWorkers, maxWorkers, queueCapacity);
 
         check(appid, appkey, masterSecret, api);
 
@@ -44,7 +49,9 @@ public final class AndroidGeTuiPusher extends AbstractConcurrentPusher {
 
         iGtPush = new IGtPush(api, appkey, masterSecret);
         getLogger().debug("Android Pusher inited, " + toString());
+
     }
+
 
     private void check(String appid, String appkey, String masterSecret, String api) {
         if (appid == null) throw new IllegalArgumentException("AndroidGeTuiPusher 的 appid 属性必须赋值");

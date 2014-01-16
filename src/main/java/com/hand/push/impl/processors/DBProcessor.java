@@ -77,6 +77,7 @@ public class DBProcessor implements Processor {
         pushJob.setPushCount(bundle.getPushPacket().getEntries().size());
         pushJob.setFailureCount(bundle.getOutput().getErrors().size());
         pushJob.setSuccessCount(bundle.getOutput().getSuccesses().size());
+        pushJob.setPushEndTimestamp(System.currentTimeMillis());
         return pushJob;
     }
 }

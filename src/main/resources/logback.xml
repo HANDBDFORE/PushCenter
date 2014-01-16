@@ -13,34 +13,30 @@
         </layout>
     </appender>
 
+    <appender name="job" class="ch.qos.logback.core.FileAppender">
+        <file>${catalina.base}/logs/${application-name}/job.log</file>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss:SSS} | %-5level | | %thread | %logger{20} | %msg%n%rEx</pattern>
+        </layout>
+    </appender>
+
     <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
         <discriminator>
             <key>jobId</key>
             <defaultValue>unknown</defaultValue>
         </discriminator>
         <sift>
-            <appender name="${jobId}" class="ch.qos.logback.core.FileAppender">
-                <file>${catalina.base}/logs/${application-name}/job-${jobId}.log</file>
-                <layout class="ch.qos.logback.classic.PatternLayout">
-                    <pattern>%d{HH:mm:ss:SSS} | %-5level | %thread | %logger{20} | %msg%n%rEx</pattern>
-                </layout>
-            </appender>
+
         </sift>
     </appender>
 
-    <logger name="com.hand.push" level="trace" >
-        <appender-ref ref="SIFT" />
+    <logger name="com.hand.push" level="info" >
+        <appender-ref ref="job" />
     </logger>
 
-    <root level="trace">
+    <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>
-
-
-
-
-
-
 
 
 </configuration>

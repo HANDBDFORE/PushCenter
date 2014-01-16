@@ -10,6 +10,7 @@
         <param-name>contextConfigLocation</param-name>
         <!--/WEB-INF/configs/spring-jms-config.xml,-->
         <param-value>
+            /WEB-INF/mvc-dispatcher-servlet.xml,
             /WEB-INF/configs/spring-hibernate-sys-config.xml,
 
             /WEB-INF/configs/spring-sys-appChannel.xml ,

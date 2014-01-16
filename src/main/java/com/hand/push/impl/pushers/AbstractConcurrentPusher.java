@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 基础并发推送模块，如果推送器需要并行推送数据，可继承自此类。
@@ -24,10 +21,31 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractConcurrentPusher implements Pusher {
 
+    protected static final int CORE_WORKERS = Runtime.getRuntime().availableProcessors()*4;
+    protected static final int MAX_WORKERS = CORE_WORKERS * 2;
+    protected static final int QUEUE_CAPACITY = 10000;
     /**
      * 用于管理线程
      */
-    protected final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+    private final ExecutorService EXECUTOR ;
+
+
+
+    public AbstractConcurrentPusher(int coreWorkers,int maxWorkers,int queueCapacity) {
+        check(coreWorkers, maxWorkers, queueCapacity);
+        EXECUTOR = new ThreadPoolExecutor(coreWorkers, maxWorkers,30,TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(queueCapacity));
+
+    }
+
+    private void check(int coreWorkers,int maxWorkers,int queueCapacity) {
+        String className = getClass().getName();
+        if (coreWorkers <= 0) throw new IllegalArgumentException(className+" 的 coreWorkers 属性必须>0");
+        if (maxWorkers <=0 ) throw new IllegalArgumentException(className+" 的 maxWorkers 属性必须>0");
+        if (maxWorkers <coreWorkers ) throw new IllegalArgumentException(className+" 的 maxWorkers 属性不能小于coreWorkers");
+        if (queueCapacity <= 0) throw new IllegalArgumentException(className+" 的 queueCapacity 属性必须>0");
+    }
+
+
 
     /**
      * 对象销毁时清理
@@ -63,15 +81,31 @@ public abstract class AbstractConcurrentPusher implements Pusher {
         //并发推送
         for (final PushEntry pushRequest : pushRequests) {
 
-            final Runnable task;
+
 
             try {
                 //各子类实现如何创建一个推送任务
-                task = getTask(pushRequest, output);
-            } catch (Throwable e) {
+                final Runnable task = getTask(pushRequest, output);
+
+                //提交一个任务
+                EXECUTOR.submit(new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            //利用模板模式
+                            task.run();
+                        } finally {
+                            //计数器递减
+                            endGate.countDown();
+                        }
+                    }
+                });
+
+            }
+            catch (Throwable e) {
                 //创建任务的过程中可能会产生异常，捕获后记录
                 e.printStackTrace();
-                logger.error("Create push thread error, " + e.getCause());
+                logger.error("Create push thread error, " + e);
 
                 //计数器递减，否则方法直到超时才会退出
                 endGate.countDown();
@@ -83,20 +117,6 @@ public abstract class AbstractConcurrentPusher implements Pusher {
                 continue;
             }
 
-
-            //提交一个任务
-            EXECUTOR.submit(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        //利用模板模式
-                        task.run();
-                    } finally {
-                        //计数器递减
-                        endGate.countDown();
-                    }
-                }
-            });
 
         }
 

@@ -60,4 +60,41 @@
         </bean>
     </beans>
 
+    <!--<beans>-->
+        <!--<description>-->
+            <!--test系统推送相关配置-->
+        <!--</description>-->
+
+
+        <!--<bean id="testApp" class="com.hand.push.core.domain.AppChannel"-->
+              <!--c:appName="test" c:appSecret="handhand" c:pushers-ref="testAppPusherList">-->
+
+            <!--<description>-->
+                <!--HR系统推送相关配置-->
+            <!--</description>-->
+        <!--</bean>-->
+
+        <!--<util:list id="testAppPusherList">-->
+            <!--<ref bean="MockAndroidPusher"/>-->
+            <!--<ref bean="MockiOSPusher"/>-->
+        <!--</util:list>-->
+
+
+        <!--<bean id="MockAndroidPusher" class="com.hand.push.impl.pushers.test.MockAndroidPusher"-->
+             <!-->-->
+
+            <!--<description>-->
+                <!--使用个推进行android推送-->
+            <!--</description>-->
+        <!--</bean>-->
+
+        <!--<bean id="MockiOSPusher" class="com.hand.push.impl.pushers.test.MockIOSPusher"-->
+              <!-->&lt;!&ndash;c:sound="default" &ndash;&gt;-->
+
+            <!--<description>-->
+                <!--iOS pusher-->
+            <!--</description>-->
+        <!--</bean>-->
+    <!--</beans>-->
+
 </beans>

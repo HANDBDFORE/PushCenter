@@ -149,4 +149,12 @@ public class PushJob {
     public void setUnProcessCount(int unProcessCount) {
         this.unProcessCount = unProcessCount;
     }
+
+    public long getPushEndTimestamp() {
+        return pushEndTimestamp;
+    }
+
+    public void setPushEndTimestamp(long pushEndTimestamp) {
+        this.pushEndTimestamp = pushEndTimestamp;
+    }
 }

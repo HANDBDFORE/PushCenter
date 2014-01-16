@@ -34,7 +34,10 @@ public class PushProcessor implements Processor {
 
     @Override
     public void process(Bundle bundle) {
+        long start = System.currentTimeMillis();
         Logger logger = getLogger();
+        System.out.println(bundle.getJobId()+ "start: "+ start);
+        logger.info(bundle.getJobId() + "start: " + start);
 
         logger.debug("PushProcessor received bundle");
 
@@ -66,12 +69,14 @@ public class PushProcessor implements Processor {
                 logger.error(pne.getMessage());
             } catch (RuntimeException otherE) {
                 //捕获未知错误，收集数据返回
-                logger.error("An unexpected error occurred, I've no idea: " + otherE.getCause());
+                logger.error("An unexpected error occurred, I've no idea: " + otherE);
             }
 
         }
 
         logger.trace("process end");
+        logger.info(bundle.getJobId() + " end: " + (float) (System.currentTimeMillis() - start) / 1000);
+        System.out.println(bundle.getJobId()+" end: "+(float)(System.currentTimeMillis()-start)/1000);
 
     }
 

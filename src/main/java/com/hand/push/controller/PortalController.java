@@ -4,6 +4,7 @@ import com.hand.push.core.ProcessorChain;
 import com.hand.push.core.domain.Bundle;
 import com.hand.push.core.domain.BundleImpl;
 import com.hand.push.core.dto.PushRequest;
+import com.hand.push.core.service.PushChainService;
 import com.hand.push.util.JsonHelper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -25,8 +26,9 @@ import static com.hand.push.util.ResponseHelper.success;
 @RequestMapping("/push")
 public class PortalController {
 
-    @Resource(name = "processorChain")
-    private ProcessorChain processorChain;
+
+    @Resource(name = "pushChainService")
+    private PushChainService service;
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
@@ -35,17 +37,9 @@ public class PortalController {
         PushRequest packet = build(packetString);
         getLogger().debug("Packet data is: " + packet.toString());
 
-        String jobId = DigestUtils.md5Hex(String.valueOf(System.currentTimeMillis()));
-        getLogger().info("jobId generated: " + jobId);
 
-        MDC.put("jobId", jobId);
+        String jobId = service.accept(packet);
 
-        Bundle bundle = new BundleImpl(packet, jobId);
-
-        //处理
-        processorChain.process(bundle);
-
-        MDC.clear();
         return success("您的推送请求已经接受，请稍后根据jobId查询结果").addBody("jobId", jobId).result();
 
 
