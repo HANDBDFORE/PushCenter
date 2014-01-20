@@ -1,9 +1,11 @@
 package com.hand.push.impl.service;
 
+import com.hand.push.core.AppNotFoundException;
 import com.hand.push.core.ProcessorChain;
 import com.hand.push.core.domain.Bundle;
 import com.hand.push.core.domain.BundleImpl;
 import com.hand.push.core.dto.PushRequest;
+import com.hand.push.core.repository.AppRegister;
 import com.hand.push.core.service.PushChainService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -31,14 +33,18 @@ public class PushChainServiceImpl implements PushChainService {
     //并发执行处理链
     private final ProcessorChain processorChain;
 
-    public PushChainServiceImpl(ProcessorChain processorChain) {
-        this(processorChain, defaultWorkers, defaultWorkers * 2, 40000);
+    //获取app信息
+    private final AppRegister appRegister;
+
+    public PushChainServiceImpl(AppRegister appRegister,ProcessorChain processorChain) {
+        this(appRegister,processorChain, defaultWorkers, defaultWorkers * 2, 40000);
     }
 
-    public PushChainServiceImpl(ProcessorChain processorChain, int coreWorkers, int emergencyWorkers, int queueCapacity) {
+    public PushChainServiceImpl(AppRegister appRegister,ProcessorChain processorChain, int coreWorkers, int emergencyWorkers, int queueCapacity) {
 
         executor = new ThreadPoolExecutor(coreWorkers, emergencyWorkers, 30, TimeUnit.MINUTES, new ArrayBlockingQueue<Runnable>(queueCapacity));
         this.processorChain = processorChain;
+        this.appRegister = appRegister;
 
     }
 
@@ -47,8 +53,17 @@ public class PushChainServiceImpl implements PushChainService {
 
         final Logger logger = getLogger();
 
+        //检查app是否注册
+        try{
+            appRegister.loadApp(request.getApp());
+        }catch (AppNotFoundException e){
+            logger.error(request.getApp().getKey()+" not found.");
+            throw new RejectedExecutionException("创建任务失败: "+request.getApp().getKey()+" 未在系统中注册，请检查配置。");
+        }
+
+
         if (executor.isShutdown()) {
-            logger.error("PushProcessor attempt to execute processors while shutting down, push requests REJECTED.");
+            logger.error("PushProcessor attempts to execute processors while shutting down, push requests REJECTED.");
             throw new RejectedExecutionException("系统正在关闭，拒绝执行");
 
         }

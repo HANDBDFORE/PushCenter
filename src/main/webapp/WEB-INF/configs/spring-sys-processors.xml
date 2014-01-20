@@ -12,9 +12,7 @@
         <description>系统核心组件配置</description>
         <bean id="pushChainService" class="com.hand.push.impl.service.PushChainServiceImpl">
             <constructor-arg name="processorChain" ref="processorChain"/>
-            <constructor-arg name="coreWorkers" value="16"/>
-            <constructor-arg name="emergencyWorkers" value="32"/>
-            <constructor-arg name="queueCapacity" value="20000"/>
+            <constructor-arg name="appRegister" ref="appRegisterSpringImpl"/>
         </bean>
     </beans>
 
